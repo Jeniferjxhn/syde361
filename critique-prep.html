@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SYDE 361 Dashboard — Campus Climate Monitoring</title>
+<style>
+  :root {
+    --surface-1: #fcfcfb;
+    --surface-2: #f3f2ef;
+    --border: #e2e0da;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #7a7873;
+    --series-1: #2a78d6;
+    --series-2: #1baf7a;
+    --series-3: #eda100;
+    --series-5: #4a3aa7;
+    --series-6: #e34948;
+    --accent-bg: #cde2fb;
+    --good: #008300;
+    --warning: #b87700;
+    --serious: #c43c3b;
+    --tile-bg: #ffffff;
+    --shadow: 0 1px 3px rgba(0,0,0,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --surface-1: #1a1a19;
+      --surface-2: #232322;
+      --border: #383733;
+      --text-primary: #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted: #8f8e86;
+      --series-1: #3987e5;
+      --series-2: #199e70;
+      --series-3: #c98500;
+      --series-5: #9085e9;
+      --series-6: #e66767;
+      --accent-bg: #10325c;
+      --good: #35a135;
+      --warning: #d99a2b;
+      --serious: #e66767;
+      --tile-bg: #222221;
+      --shadow: 0 1px 3px rgba(0,0,0,.4);
+    }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--surface-1);
+    color: var(--text-primary);
+    font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    padding-bottom: 4rem;
+  }
+  a { color: var(--series-1); }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 1.25rem; }
+
+  header.site {
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+    padding: 1.6rem 0 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+  header.site h1 { font-size: 1.45rem; letter-spacing: -.01em; }
+  header.site .sub { color: var(--text-secondary); margin-top: .25rem; font-size: .95rem; }
+  .today-chip {
+    display: inline-flex; align-items: center; gap: .45rem;
+    background: var(--accent-bg); color: var(--text-primary);
+    border-radius: 999px; padding: .3rem .85rem; font-size: .85rem; font-weight: 600;
+    margin-top: .8rem;
+  }
+  .today-chip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--series-1); }
+
+  nav.toc { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0 0 1.75rem; }
+  nav.toc a {
+    text-decoration: none; font-size: .84rem; color: var(--text-secondary);
+    border: 1px solid var(--border); border-radius: 999px; padding: .28rem .8rem;
+    background: var(--tile-bg);
+  }
+  nav.toc a:hover { color: var(--text-primary); border-color: var(--text-muted); }
+
+  h2 {
+    font-size: 1.12rem; margin: 2.4rem 0 .9rem; letter-spacing: -.01em;
+    scroll-margin-top: 1rem;
+  }
+  h2 .k { color: var(--text-muted); font-weight: 500; font-size: .85rem; margin-left: .5rem; }
+  h3 { font-size: .95rem; margin: 1.1rem 0 .4rem; }
+  p.lede { color: var(--text-secondary); max-width: 68ch; }
+
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: .8rem; }
+  .tile {
+    background: var(--tile-bg); border: 1px solid var(--border); border-radius: 10px;
+    padding: .95rem 1.05rem; box-shadow: var(--shadow);
+  }
+  .tile .label { font-size: .78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; }
+  .tile .value { font-size: 1.75rem; font-weight: 700; letter-spacing: -.02em; margin-top: .15rem; }
+  .tile .note { font-size: .82rem; color: var(--text-secondary); margin-top: .1rem; }
+
+  .card {
+    background: var(--tile-bg); border: 1px solid var(--border); border-radius: 10px;
+    padding: 1.1rem 1.25rem; box-shadow: var(--shadow);
+  }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: .9rem; }
+  @media (max-width: 760px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  ul.clean { list-style: none; }
+  ul.clean li { padding: .3rem 0 .3rem 1.15rem; position: relative; color: var(--text-secondary); }
+  ul.clean li::before { content: ""; position: absolute; left: 0; top: .78rem; width: 6px; height: 6px; border-radius: 2px; background: var(--series-1); }
+  ul.clean li strong { color: var(--text-primary); }
+
+  /* timeline */
+  .timeline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; margin: .8rem 0 .4rem; }
+  .tl-week { border-radius: 6px; padding: .55rem .6rem .6rem; background: var(--surface-2); border: 1px solid var(--border); position: relative; min-height: 96px; }
+  .tl-week.done { border-color: var(--series-2); }
+  .tl-week.now { border-color: var(--series-1); background: var(--accent-bg); }
+  .tl-week .wk { font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted); }
+  .tl-week .ti { font-weight: 650; font-size: .85rem; margin: .1rem 0 .15rem; }
+  .tl-week .da { font-size: .76rem; color: var(--text-secondary); }
+  .tl-week .flag { position: absolute; top: .5rem; right: .55rem; font-size: .72rem; font-weight: 700; }
+  .tl-week.done .flag { color: var(--series-2); }
+  .tl-week.now .flag { color: var(--series-1); }
+  .milestones { display: flex; flex-wrap: wrap; gap: 1.4rem; font-size: .84rem; color: var(--text-secondary); margin-top: .5rem; }
+  .milestones b { color: var(--text-primary); }
+
+  table { width: 100%; border-collapse: collapse; font-size: .875rem; }
+  .tablewrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; background: var(--tile-bg); box-shadow: var(--shadow); }
+  th, td { text-align: left; padding: .55rem .8rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: .76rem; text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted); font-weight: 600; background: var(--surface-2); }
+  tr:last-child td { border-bottom: none; }
+  td .why { color: var(--text-muted); font-size: .8rem; }
+
+  .tag { display: inline-block; font-size: .72rem; font-weight: 700; border-radius: 5px; padding: .1rem .5rem; white-space: nowrap; }
+  .tag.essential { background: var(--accent-bg); color: var(--series-1); }
+  .tag.nice { color: var(--series-2); background: color-mix(in srgb, var(--series-2) 14%, transparent); }
+  .tag.stretch { color: var(--series-5); background: color-mix(in srgb, var(--series-5) 14%, transparent); }
+  .tag.risk { color: var(--serious); background: color-mix(in srgb, var(--serious) 12%, transparent); }
+  .tag.open { color: var(--warning); background: color-mix(in srgb, var(--warning) 14%, transparent); }
+
+  .qa { border-left: 3px solid var(--series-1); padding: .15rem 0 .15rem .9rem; margin: .9rem 0; }
+  .qa .q { font-weight: 650; }
+  .qa .a { color: var(--text-secondary); margin-top: .2rem; }
+
+  .callout {
+    border: 1px dashed var(--warning); border-radius: 10px; padding: .9rem 1.1rem;
+    color: var(--text-secondary); background: color-mix(in srgb, var(--warning) 6%, transparent);
+    margin-top: .9rem;
+  }
+  .callout b { color: var(--text-primary); }
+
+  footer { margin-top: 3rem; color: var(--text-muted); font-size: .82rem; }
+  code { background: var(--surface-2); border-radius: 4px; padding: .05rem .35rem; font-size: .85em; }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <h1>SYDE 361 — Campus Climate Monitoring Tool</h1>
+    <div class="sub">Team: Aksha · Pahul · Yashika · Syra · Jenifer · Ishan &nbsp;·&nbsp; June 26 → July 27, 2026</div>
+    <div class="today-chip"><span class="dot"></span> Today, July 6 — Design Critique day</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <nav class="toc">
+    <a href="#status">Status</a>
+    <a href="#critique">Today's critique</a>
+    <a href="#timeline">Timeline</a>
+    <a href="#next">Next up (Week 3)</a>
+    <a href="#features">Features</a>
+    <a href="#nodes">Node locations</a>
+    <a href="#roles">Roles</a>
+    <a href="#risks">Risks &amp; gaps</a>
+    <a href="#insights">Insights</a>
+  </nav>
+
+  <section id="status">
+    <div class="tiles">
+      <div class="tile">
+        <div class="label">Milestone</div>
+        <div class="value">Critique</div>
+        <div class="note">Happening today, July 6</div>
+      </div>
+      <div class="tile">
+        <div class="label">Days to final prototype</div>
+        <div class="value">21</div>
+        <div class="note">Hardware + software due July 27</div>
+      </div>
+      <div class="tile">
+        <div class="label">Sensor nodes planned</div>
+        <div class="value">5</div>
+        <div class="note">Contingency floor: 3 (E7, DC, PAC)</div>
+      </div>
+      <div class="tile">
+        <div class="label">Team size</div>
+        <div class="value">6</div>
+        <div class="note">Parallelize — don't add meetings</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="critique">
+    <h2>Today's critique <span class="k">from the W06 worksheet</span></h2>
+    <p class="lede">First 5 minutes: all group members explain the design, context, and objectives (arch-eng + urban planning vs. plant ops), then open the floor for clarifying questions.</p>
+
+    <div class="grid-2" style="margin-top:.9rem;">
+      <div class="card">
+        <h3 style="margin-top:0;">What we're asking for feedback on</h3>
+        <ul class="clean">
+          <li><strong>How to measure success at the decision layer.</strong> Success is currently defined at the hardware layer (do sensors read correctly?) but the objective lives at the decision layer — does a planner or arch-eng student make a different, better-informed choice because of the dashboard?</li>
+          <li><strong>Is one paired site (RCH + control) defensible?</strong> Or do our claims need to be scoped more narrowly?</li>
+          <li><strong>Temporal validity.</strong> Built in July with simulated multi-year data — do reviewers trust one summer month extrapolated across seasons? Material/shading decisions also depend on winter behavior (ice, snow load, freeze-thaw). Caveat the seasonal scope explicitly.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0;">The four core critique considerations</h3>
+        <div class="qa">
+          <div class="q">1 · What is the objective?</div>
+          <div class="a">Convert local environmental data (ambient temp, humidity, surface temp, solar exposure) into actionable insight for arch-eng and urban planning students — find campus heat sinks vs. spots where shade/greenery already work, at a glance.</div>
+        </div>
+        <div class="qa">
+          <div class="q">2 · Which elements relate to it?</div>
+          <div class="a">Web dashboard (trends, two-persona views), weatherproof box design, and the sensor stack — MLX90614 surface temp, AHT20 ambient temp/humidity, BH1750 solar exposure — feeding the surface-vs-ambient differential.</div>
+        </div>
+        <div class="qa">
+          <div class="q">3 · Are they effective?</div>
+          <div class="a">Hardware captures the right raw signals; the box protects reading accuracy; impact lives in the software layer.</div>
+        </div>
+        <div class="qa">
+          <div class="q">4 · Why / why not?</div>
+          <div class="a">Success = the dashboard clearly shows a meaningful difference (or lack of one) between built surface and control, understandable without interpreting raw numbers. Not "did we collect data" but "does it show whether this site is a heat sink."</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:.9rem;">
+      <div class="card">
+        <h3 style="margin-top:0;">High-level objectives of the element</h3>
+        <ul class="clean">
+          <li>Move a user from <strong>"I intuitively know it's hot here"</strong> to <strong>"I have fundable, quantified evidence for an intervention."</strong></li>
+          <li><strong>Support real design decisions</strong> — Isabella (urban planning interview) said heat-sink data would change where she plans comfort spaces and how much outdoor space she designs.</li>
+          <li><strong>Fit existing workflows</strong> — GIS is her "one stop shop"; keep the dashboard structured enough to plausibly become a GIS layer later.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0;">Low-level objectives</h3>
+        <ul class="clean">
+          <li>Let users <strong>compare readings against their own intuitive estimate</strong> — sharpen the mental model, don't just restate it.</li>
+          <li>Reliable capture of surface temp, ambient temp, and solar exposure at built site <em>and</em> vegetated control, across day/night cycles.</li>
+          <li>Surface a clear <strong>surface-vs-ambient differential</strong> as the core output (big gap = heat sink, small gap = mitigation working) rather than raw values.</li>
+          <li><strong>Track over time</strong>, not snapshots — enables before/after validation of interventions (e.g., did added vegetation actually cool the space?).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout">
+      <b>During/after the session:</b> the worksheet's final section — <i>"Potential Ways to Improve the Design Towards the Objectives"</i> — must be filled in live. Capture <b>all</b> ideas, not just ones you agree with; let emotions digest before adopting/rejecting. Also pre-empt the known pushback: planners already intuit where hot spots are (parking lots, south/west facades, unshaded plazas) — our differentiators are <b>before/after intervention validation</b> and <b>long-term green-infrastructure monitoring</b>, which satellite LST and intuition can't provide.
+    </div>
+  </section>
+
+  <section id="timeline">
+    <h2>Timeline <span class="k">5 weeks · June 26 → July 27</span></h2>
+    <div class="timeline">
+      <div class="tl-week done">
+        <span class="flag">✓ done</span>
+        <div class="wk">Week 1</div>
+        <div class="ti">Foundation</div>
+        <div class="da">Jun 26 – Jul 2 · hardware sourcing, repo, 2 nodes, dashboard skeleton, D4 draft</div>
+      </div>
+      <div class="tl-week now">
+        <span class="flag">● now</span>
+        <div class="wk">Week 2</div>
+        <div class="ti">Critique</div>
+        <div class="da">Jul 3 – 6 · 5 nodes, live data in dashboard, rehearsal → <b>Critique Jul 6</b></div>
+      </div>
+      <div class="tl-week">
+        <div class="wk">Week 3</div>
+        <div class="ti">Feature build</div>
+        <div class="da">Jul 7 – 13 · sparklines, comparison view, enclosure, outdoor deploy</div>
+      </div>
+      <div class="tl-week">
+        <div class="wk">Week 4</div>
+        <div class="ti">Polish + depth</div>
+        <div class="da">Jul 14 – 20 · baselines, CSV export, 48-h reliability test, user walkthroughs</div>
+      </div>
+      <div class="tl-week">
+        <div class="wk">Week 5</div>
+        <div class="ti">Final stretch</div>
+        <div class="da">Jul 21 – 27 · bug fixes, install all nodes, poster, docs → <b>Due Jul 27</b></div>
+      </div>
+    </div>
+    <div class="milestones">
+      <span><b>Jul 6</b> — Design Critique (today)</span>
+      <span><b>Jul 7–8</b> — reserved as full-team design-response days if feedback redirects</span>
+      <span><b>Jul 27</b> — Final hardware + software prototype due</span>
+    </div>
+  </section>
+
+  <section id="next">
+    <h2>Next up — Week 3 feature build <span class="k">Jul 7 – 13, pending critique feedback</span></h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Feature</th><th>Owner</th><th>Target</th></tr></thead>
+        <tbody>
+          <tr><td>24-hour trend sparkline per location (Chart.js)</td><td>Yashika + Jenifer</td><td>Jul 10</td></tr>
+          <tr><td>Comfort comparison view ("Right now, E7 vs. DC")</td><td>Pahul</td><td>Jul 11</td></tr>
+          <tr><td>Mobile UX polish (tap targets, fonts, loading states)</td><td>Syra</td><td>Jul 12</td></tr>
+          <tr><td>Enclosure design for one outdoor node (3D print / laser cut)</td><td>Ishan</td><td>Jul 13</td></tr>
+          <tr><td>Outdoor node deployment — Ring Road / Columbia bus stop</td><td>Ishan + Pahul</td><td>Jul 13</td></tr>
+          <tr><td>Historical trend page (past 7 days per node)</td><td>Yashika</td><td>Jul 13</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout" style="border-color: var(--series-1); background: color-mix(in srgb, var(--series-1) 6%, transparent);">
+      <b>Rule:</b> don't code features until critique feedback is digested — Jul 7–8 are reserved as design-response days if the critique redirects the design.
+    </div>
+  </section>
+
+  <section id="features">
+    <h2>Feature priorities <span class="k">from Part 3 — insights → features</span></h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Feature</th><th>Priority</th><th>Difficulty</th><th>User impact</th></tr></thead>
+        <tbody>
+          <tr><td>Multi-node sensor network (3–5 × ESP32 + AHT20)</td><td><span class="tag essential">Essential</span></td><td>Medium</td><td>Critical — no tool without it</td></tr>
+          <tr><td>Location-specific comfort index (plain-English tiers)</td><td><span class="tag essential">Essential</span></td><td>Low–Med</td><td>High — turns data into decisions</td></tr>
+          <tr><td>Web dashboard with color-coded campus map</td><td><span class="tag essential">Essential</span></td><td>Medium</td><td>Critical for adoption</td></tr>
+          <tr><td>Pre-departure check view (mobile "should I go?")</td><td><span class="tag essential">Essential</span></td><td>Low</td><td>High — the primary use case</td></tr>
+          <tr><td>24-hour trend display per node</td><td><span class="tag essential">Essential</span></td><td>Medium</td><td>Med-High — patterns, not snapshots</td></tr>
+          <tr><td>Natural-language daily summary</td><td><span class="tag nice">Nice-to-have</span></td><td>Low</td><td>High — most accessible format</td></tr>
+          <tr><td>Comfort comparison across nodes</td><td><span class="tag nice">Nice-to-have</span></td><td>Low</td><td>Medium</td></tr>
+          <tr><td>Historical baseline comparison</td><td><span class="tag nice">Nice-to-have</span></td><td>Medium</td><td>Medium — power users</td></tr>
+          <tr><td>Institutional CSV export (Facilities / Athletics)</td><td><span class="tag nice">Nice-to-have</span></td><td>Low–Med</td><td>High institutional impact</td></tr>
+          <tr><td>Weatherproof enclosure for outdoor node</td><td><span class="tag nice">Nice-to-have</span></td><td>Med-High</td><td>Required for outdoor deploy</td></tr>
+          <tr><td>Ecological display layer (plant heat-stress framing)</td><td><span class="tag nice">Nice-to-have</span></td><td>Low</td><td>Institutional + more-than-human credit</td></tr>
+          <tr><td>Push notification / email alerts</td><td><span class="tag stretch">Stretch</span></td><td>High</td><td>Medium</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:.7rem; color: var(--text-secondary); font-size:.88rem;"><b style="color:var(--text-primary);">Deliberately excluded:</b> occupancy/busyness (privacy + hardware), air quality/CO₂ (different sensors), wind (AHT20 can't measure it — name the gap honestly), and any login/accounts (hard adoption killer).</p>
+  </section>
+
+  <section id="nodes">
+    <h2>Node locations <span class="k">interview-justified placement</span></h2>
+    <div class="card">
+      <ul class="clean">
+        <li><strong>E7 silent study (indoor)</strong> — most-mentioned location; reliably cold regardless of outdoor conditions.</li>
+        <li><strong>Ring Road crossing / Columbia bus stop (outdoor)</strong> — worst wind exposure on commutes (named twice by Yashvanth; echoed by Kaven).</li>
+        <li><strong>PAC fitness area (indoor)</strong> — independently named by three interviewees as variably hot/humid; mornings noticeably better.</li>
+        <li><strong>DC study floor (indoor)</strong> — cold and "depressing" in winter; source of wasted trips when full.</li>
+        <li><strong>SLC / QNC outdoor courtyard (outdoor)</strong> — the contrast/baseline location for "it's actually nice outside."</li>
+      </ul>
+      <p style="margin-top:.6rem; font-size:.86rem; color:var(--text-muted);">Critique talking point: "this sensor is here because three independent participants named this exact location" is the strongest placement argument we have.</p>
+    </div>
+  </section>
+
+  <section id="roles">
+    <h2>Roles</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Member</th><th>Primary</th><th>Secondary</th></tr></thead>
+        <tbody>
+          <tr><td><b>Aksha</b></td><td>Product design lead, critique presenter, user journey narrative</td><td>D4 co-author</td></tr>
+          <tr><td><b>Pahul</b></td><td>Hardware build and testing</td><td>Node deployment coordination</td></tr>
+          <tr><td><b>Yashika</b></td><td>Web frontend (dashboard, charts, UX)</td><td>Historical trend feature</td></tr>
+          <tr><td><b>Syra</b></td><td>Design documentation, D4 lead</td><td>Mobile UX polish</td></tr>
+          <tr><td><b>Jenifer</b></td><td>Full-stack integration, GitHub management</td><td>Institutional export · hardware backup</td></tr>
+          <tr><td><b>Ishan</b></td><td>Firmware lead, outdoor node / enclosure</td><td>Node reliability testing</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="risks">
+    <h2>Risks, contingencies &amp; open questions</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h3 style="margin-top:0;">Contingency plan</h3>
+        <ul class="clean">
+          <li><strong>Node count slips below 5:</strong> deploy 3 at highest-priority spots (E7, DC, PAC). Don't rush assembly at the cost of stability.</li>
+          <li><strong>WiFi hub too complex:</strong> fall back to manual SD-card collection, pushed to the dashboard daily. Loses real-time, keeps everything else.</li>
+          <li><strong>Critique redirects the design:</strong> Jul 7–8 are full-team design-response days before any feature code.</li>
+          <li><strong>Hardware reserve:</strong> Jenifer or Syra can re-solder / reconfigure / replace a failing node.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0;">Open questions to validate</h3>
+        <ul class="clean">
+          <li><span class="tag open">Open</span> &nbsp;Do planners actually need this, or do they already intuit hot spots? (Differentiate via before/after intervention validation + green-infrastructure monitoring.)</li>
+          <li><span class="tag open">Open</span> &nbsp;Is one paired site (RCH + control) enough to draw conclusions, or should claims be scoped narrower?</li>
+          <li><span class="tag risk">Risk</span> &nbsp;July-only data + simulated multi-year set may imply more seasonal generality than it has — caveat explicitly.</li>
+          <li><span class="tag risk">Risk</span> &nbsp;Long-term ownership: "who's going to keep it running?" — design for maintainability or it's e-waste in two years.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="insights">
+    <h2>Design insights <span class="k">condensed from Part 2</span></h2>
+    <div class="grid-2">
+      <div class="card">
+        <ul class="clean">
+          <li><strong>Protect scarce student focus</strong> — frame outputs as go/no-go recommendations, not weather readouts. (I1)</li>
+          <li><strong>Location specificity is everything</strong> — students experience the Ring Road crossing and E7 silent study, not "campus temperature." (I2)</li>
+          <li><strong>The tool should feel invisible</strong> — more alert system than app. (I3)</li>
+          <li><strong>Indoor–outdoor gap is the core value</strong> — the weather app says 28°C; E7 is 16°C and PAC is 32°C. Unserved by every existing tool. (I4)</li>
+          <li><strong>A number is not a decision — a recommendation is.</strong> (I5)</li>
+          <li><strong>Mobile students gain most</strong> and are the most underserved. (I6)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <ul class="clean">
+          <li><strong>Prevent wasted trips</strong> — the recurring failure pattern across interviews. (I7)</li>
+          <li><strong>Trends matter as much as now</strong> — the time-series log is a forecast engine if displayed well. (I8)</li>
+          <li><strong>Same reading, different meanings per stakeholder</strong> — 20°C wet June day: "manageable" to a commuter, "fungal disease weather" to the rose. (I9)</li>
+          <li><strong>Maintainability decides long-term value</strong> — simple wiring, easy batteries, documented setup. (I10)</li>
+          <li><strong>Ecological stewardship is a designed-in feature</strong> — same data, reframed for nearby plantings, at zero extra hardware cost. (I11)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Sources in this folder: <code>SYDE361-S2026-W06-R-Critique Work Sheet.md</code> · <code>361 Project Outline.md</code>. Built July 6, 2026.
+  </footer>
+
+</div>
+</body>
+</html>
