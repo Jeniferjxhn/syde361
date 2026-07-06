@@ -148,12 +148,18 @@
     border: none; border-radius: 50%; background: var(--surface-2); color: var(--text-secondary);
     font-size: .9rem; font-weight: 700; cursor: pointer; line-height: 1;
   }
-  .sheet-links { display: flex; gap: .5rem; margin-top: .9rem; }
-  .sheet-links button {
-    flex: 1; border: none; border-radius: 10px; padding: .6rem .5rem; cursor: pointer;
-    background: var(--accent-bg); color: var(--text-primary); font: inherit;
-    font-size: .8rem; font-weight: 650;
+  .seg.mini { margin: .45rem 0 .55rem; padding: 3px; }
+  .seg.mini button { font-size: .76rem; padding: .42rem .4rem; }
+  .m-ins-h { font-size: .68rem; text-transform: uppercase; letter-spacing: .07em; color: var(--text-muted); font-weight: 750; margin-top: 1rem; }
+  .m-card {
+    background: var(--surface-2); border-left: 4px solid var(--border);
+    border-radius: 10px; padding: .7rem .85rem;
+    font-size: .82rem; color: var(--text-secondary);
   }
+  .m-card .m-act { font-weight: 700; color: var(--text-primary); font-size: .88rem; margin-bottom: .3rem; }
+  .m-card b { color: var(--text-primary); }
+  .m-card p + p { margin-top: .45rem; }
+  .m-card.muted { color: var(--text-muted); }
   @media (prefers-reduced-motion: reduce) {
     .sheet, .sheet-backdrop { transition: none; }
   }
@@ -228,7 +234,7 @@
   .q-dt::after { content: "vs ctrl"; font-size: .56rem; font-weight: 650; color: var(--text-muted); letter-spacing: .04em; margin-top: .1rem; }
   .q-main { flex: 1; min-width: 0; }
   .q-main .n { font-weight: 680; font-size: .92rem; letter-spacing: -.01em; }
-  .q-main .a { font-size: .77rem; color: var(--text-muted); margin-top: .12rem; }
+  .q-main .a { font-size: .78rem; color: var(--text-secondary); font-weight: 550; margin-top: .14rem; }
   .q-chev { flex: none; color: var(--text-muted); transition: transform .18s; display: flex; }
   .q-chev svg { width: 16px; height: 16px; }
   details[open] .q-chev { transform: rotate(180deg); }
@@ -240,8 +246,6 @@
   .delta-pair .dp .l { font-size: .64rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .03em; }
   .delta-pair .dp .v { font-weight: 750; font-size: 1.05rem; }
 
-  .gaps { border: 1px dashed var(--border); border-radius: 10px; padding: .7rem .9rem; font-size: .78rem; color: var(--text-muted); margin-top: 1rem; }
-  .gaps b { color: var(--text-secondary); }
 
   footer { margin-top: 1.6rem; font-size: .72rem; color: var(--text-muted); }
   footer a { color: var(--blue); }
@@ -301,7 +305,7 @@
         <div class="bar" role="img" aria-label="Color scale from blue (cooler than control) through gray (neutral) to red (strong heat sink)"></div>
         <span>Heat sink</span>
       </div>
-      <div class="cap">Tap a node to jump to its insight.</div>
+      <div class="cap">Tap a node for its data and what it means.</div>
     </div>
 
     <div class="seg" role="group" aria-label="Choose discipline">
@@ -311,12 +315,12 @@
 
     <!-- ── urban planning persona ── -->
     <div id="persona-up">
-      <div class="queue-h"><span>Priority queue · campus scale</span><span class="r">3 flagged · avg +9.0°</span></div>
+      <div class="queue-h"><span>Action plan · campus scale</span><span class="r">4 flagged · avg +9.0°</span></div>
 
       <details class="q-item" data-node="lotc">
         <summary>
           <span class="q-rank">1</span><span class="q-dt" data-dt="14.9">+14.9°</span>
-          <span class="q-main"><span class="n">Lot C parking</span><span class="a" style="display:block">Canopy tree rows + permeable edges</span></span>
+          <span class="q-main"><span class="n">Lot C parking</span><span class="a" style="display:block">🌳 Canopy tree rows + permeable edges</span></span>
           <span class="q-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
         </summary>
         <div class="q-body">
@@ -327,7 +331,7 @@
       <details class="q-item" data-node="ring">
         <summary>
           <span class="q-rank">2</span><span class="q-dt" data-dt="11.3">+11.3°</span>
-          <span class="q-main"><span class="n">Ring Rd / Columbia stop</span><span class="a" style="display:block">Shade structure on the south edge</span></span>
+          <span class="q-main"><span class="n">Ring Rd / Columbia stop</span><span class="a" style="display:block">⛱️ Shade structure on the south edge</span></span>
           <span class="q-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
         </summary>
         <div class="q-body">
@@ -335,10 +339,21 @@
         </div>
       </details>
 
+      <details class="q-item" data-node="rch">
+        <summary>
+          <span class="q-rank">3</span><span class="q-dt" data-dt="8.6">+8.6°</span>
+          <span class="q-main"><span class="n">RCH south walkway</span><span class="a" style="display:block">🌳 Planted buffer between facade and path</span></span>
+          <span class="q-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+        </summary>
+        <div class="q-body">
+          <p>The brick keeps re-radiating after sunset, so the walkway along RCH's south face stays in the heat-exposure window until <b>~9 PM</b>. At campus scale that's a pedestrian-corridor problem, not just a building problem — street trees or a planted buffer between facade and path cuts the reflected gain onto pedestrians and shortens the evening heat tail.</p>
+        </div>
+      </details>
+
       <details class="q-item" data-node="slc">
         <summary>
-          <span class="q-rank">3</span><span class="q-dt" data-dt="7">+7.0°</span>
-          <span class="q-main"><span class="n">SLC / QNC courtyard</span><span class="a" style="display:block">Shade sails — track comfort-hours</span></span>
+          <span class="q-rank">4</span><span class="q-dt" data-dt="7">+7.0°</span>
+          <span class="q-main"><span class="n">SLC / QNC courtyard</span><span class="a" style="display:block">⛱️ Shade sails — track comfort-hours</span></span>
           <span class="q-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
         </summary>
         <div class="q-body">
@@ -349,7 +364,7 @@
       <details class="q-item" data-node="m4">
         <summary>
           <span class="q-rank ok">✓</span><span class="q-dt" data-dt="3.1">+3.1°</span>
-          <span class="q-main"><span class="n">M4 site conversion</span><span class="a" style="display:block">Validated — siting decision worked</span></span>
+          <span class="q-main"><span class="n">M4 site conversion</span><span class="a" style="display:block">✅ Validated — siting decision worked</span></span>
           <span class="q-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
         </summary>
         <div class="q-body">
@@ -365,7 +380,7 @@
       <details class="q-item" data-node="kens">
         <summary>
           <span class="q-rank ok">✓</span><span class="q-dt" data-dt="0">0°</span>
-          <span class="q-main"><span class="n">Ken's Garden bed</span><span class="a" style="display:block">Control — performing as designed</span></span>
+          <span class="q-main"><span class="n">Ken's Garden bed</span><span class="a" style="display:block">🌿 Control — performing as designed</span></span>
           <span class="q-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
         </summary>
         <div class="q-body">
@@ -376,12 +391,12 @@
 
     <!-- ── arch eng persona ── -->
     <div id="persona-ae" hidden>
-      <div class="queue-h"><span>Priority queue · building scale</span><span class="r">south/west loads peaking</span></div>
+      <div class="queue-h"><span>Action plan · building scale</span><span class="r">south/west loads peaking</span></div>
 
       <details class="q-item" data-node="rch">
         <summary>
           <span class="q-rank">1</span><span class="q-dt" data-dt="8.6">+8.6°</span>
-          <span class="q-main"><span class="n">RCH south facade</span><span class="a" style="display:block">Exterior shading or envelope retrofit</span></span>
+          <span class="q-main"><span class="n">RCH south facade</span><span class="a" style="display:block">🪟 Exterior shading or envelope retrofit</span></span>
           <span class="q-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
         </summary>
         <div class="q-body">
@@ -389,10 +404,21 @@
         </div>
       </details>
 
+      <details class="q-item" data-node="ring">
+        <summary>
+          <span class="q-rank">2</span><span class="q-dt" data-dt="11.3">+11.3°</span>
+          <span class="q-main"><span class="n">Ring Rd / Columbia stop</span><span class="a" style="display:block">🏗️ Design the shelter for the measured load</span></span>
+          <span class="q-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
+        </summary>
+        <div class="q-body">
+          <p>Any shelter or infill structure at this corner inherits <b>+11°C pavement</b> below and <b>~50k lux</b> overhead. Spec a high-SRI canopy, avoid dark paving aprons, and pull glazing back from the south edge — a naive shelter design traps exactly this reflected and re-radiated load around waiting passengers.</p>
+        </div>
+      </details>
+
       <details class="q-item" data-node="slc">
         <summary>
-          <span class="q-rank">2</span><span class="q-dt" data-dt="7">+7.0°</span>
-          <span class="q-main"><span class="n">QNC courtyard exposure</span><span class="a" style="display:block">Size overhangs to the measured sun path</span></span>
+          <span class="q-rank">3</span><span class="q-dt" data-dt="7">+7.0°</span>
+          <span class="q-main"><span class="n">QNC courtyard exposure</span><span class="a" style="display:block">📐 Size overhangs to the measured sun path</span></span>
           <span class="q-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
         </summary>
         <div class="q-body">
@@ -402,8 +428,8 @@
 
       <details class="q-item" data-node="lotc">
         <summary>
-          <span class="q-rank">3</span><span class="q-dt" data-dt="14.9">+14.9°</span>
-          <span class="q-main"><span class="n">Materials, ranked by ΔT</span><span class="a" style="display:block">Spec against the measured spread</span></span>
+          <span class="q-rank">4</span><span class="q-dt" data-dt="14.9">+14.9°</span>
+          <span class="q-main"><span class="n">Materials, ranked by ΔT</span><span class="a" style="display:block">🧱 Spec against the measured spread</span></span>
           <span class="q-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
         </summary>
         <div class="q-body">
@@ -414,7 +440,7 @@
       <details class="q-item" data-node="m4">
         <summary>
           <span class="q-rank ok">✓</span><span class="q-dt" data-dt="3.1">+3.1°</span>
-          <span class="q-main"><span class="n">M4 solar chimney</span><span class="a" style="display:block">Passive design, working as measured</span></span>
+          <span class="q-main"><span class="n">M4 solar chimney</span><span class="a" style="display:block">✅ Passive design, working as measured</span></span>
           <span class="q-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
         </summary>
         <div class="q-body">
@@ -425,7 +451,7 @@
       <details class="q-item" data-node="kens">
         <summary>
           <span class="q-rank ok">✓</span><span class="q-dt" data-dt="0">0°</span>
-          <span class="q-main"><span class="n">Green baseline</span><span class="a" style="display:block">What "good" measures like</span></span>
+          <span class="q-main"><span class="n">Green baseline</span><span class="a" style="display:block">🌿 What "good" measures like</span></span>
           <span class="q-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
         </summary>
         <div class="q-body">
@@ -434,9 +460,6 @@
       </details>
     </div>
 
-    <div class="gaps">
-      <b>What this tool honestly can't tell you:</b> wind exposure (no anemometer), occupancy, air quality, and winter behaviour (ice, snow load, freeze-thaw). Data shown is July-only — don't extrapolate seasonal claims from it.
-    </div>
 
   </section>
 
@@ -522,13 +545,39 @@ const svgNS = 'http://www.w3.org/2000/svg';
 const MAP_W = 1062, MAP_H = 597;
 const MAP_BASE = `<image href="campus-map.webp" x="0" y="0" width="${MAP_W}" height="${MAP_H}" preserveAspectRatio="xMidYMid slice"/>`;
 
-function buildMap(slotId, onNodeClick) {
+function buildMap(slotId, onNodeClick, opts = {}) {
   const slot = document.getElementById(slotId);
   const svg = document.createElementNS(svgNS,'svg');
   svg.setAttribute('viewBox',`0 0 ${MAP_W} ${MAP_H}`);
   svg.setAttribute('role','img');
-  svg.setAttribute('aria-label','Schematic campus map with sensor nodes colored by surface-minus-ambient temperature differential');
+  svg.setAttribute('aria-label','Campus map with sensor nodes colored by surface-minus-ambient temperature differential');
   svg.innerHTML = MAP_BASE;
+  if (opts.heat) {
+    // GIS-style thermal overlay: soft radial plumes scaled by each node's ΔT
+    let defs = '<defs>';
+    let blobs = '<g style="pointer-events:none">';
+    NODES.forEach(n => {
+      const id = `hg-${slotId}-${n.id}`;
+      if (n.dt >= 1.5) {
+        defs += `<radialGradient id="${id}">
+          <stop offset="0%" stop-color="#c22726" stop-opacity="${0.28 + n.dt * 0.022}"/>
+          <stop offset="35%" stop-color="#e34948" stop-opacity="${0.18 + n.dt * 0.014}"/>
+          <stop offset="65%" stop-color="#f0824f" stop-opacity="${0.10 + n.dt * 0.008}"/>
+          <stop offset="85%" stop-color="#eda100" stop-opacity="0.07"/>
+          <stop offset="100%" stop-color="#eda100" stop-opacity="0"/>
+        </radialGradient>`;
+        blobs += `<circle cx="${n.x}" cy="${n.y}" r="${64 + n.dt * 6.5}" fill="url(#${id})"/>`;
+      } else {
+        defs += `<radialGradient id="${id}">
+          <stop offset="0%" stop-color="#2a78d6" stop-opacity="0.32"/>
+          <stop offset="60%" stop-color="#2a78d6" stop-opacity="0.14"/>
+          <stop offset="100%" stop-color="#2a78d6" stop-opacity="0"/>
+        </radialGradient>`;
+        blobs += `<circle cx="${n.x}" cy="${n.y}" r="70" fill="url(#${id})"/>`;
+      }
+    });
+    svg.innerHTML += defs + '</defs>' + blobs + '</g>';
+  }
   const gN = document.createElementNS(svgNS,'g');
   NODES.forEach(n => {
     const g = document.createElementNS(svgNS,'g');
@@ -583,12 +632,33 @@ function openModal(n) {
     <div class="spark-title"><b>${n.dt>=0?'+':''}${n.dt}°C vs control</b> · surface temp, last 24 h</div>
     <div class="spark-wrap" id="sparkwrap"></div>
     <p style="font-size:.8rem;color:var(--text-secondary);margin-top:.55rem;">${n.note}</p>
-    <div class="sheet-links">
-      ${document.querySelector(`#persona-up [data-node="${n.id}"]`) ? `<button onclick="revealInsight('${n.id}','up')">Urban planning insight ↗</button>` : ''}
-      ${document.querySelector(`#persona-ae [data-node="${n.id}"]`) ? `<button onclick="revealInsight('${n.id}','ae')">Arch eng insight ↗</button>` : ''}
-    </div>`;
+    <div class="m-ins-h">What it means</div>
+    <div class="seg mini" id="m-seg" role="group" aria-label="Choose discipline">
+      <button data-p="up">Urban planning</button>
+      <button data-p="ae">Arch eng</button>
+    </div>
+    <div id="m-insight"></div>`;
+  d.querySelectorAll('#m-seg button').forEach(b =>
+    b.addEventListener('click', () => modalInsight(n, b.dataset.p)));
+  const hasCurrent = document.querySelector(`#persona-${persona} [data-node="${n.id}"]`);
+  modalInsight(n, hasCurrent ? persona : (persona === 'up' ? 'ae' : 'up'));
   drawSpark(n);
   showSheet();
+}
+
+function modalInsight(n, p) {
+  document.querySelectorAll('#m-seg button').forEach(b =>
+    b.setAttribute('aria-pressed', b.dataset.p === p));
+  setPersona(p); // keep the Insights tab in sync with what you chose here
+  const box = document.getElementById('m-insight');
+  const item = document.querySelector(`#persona-${p} [data-node="${n.id}"]`);
+  if (!item) {
+    box.innerHTML = `<div class="m-card muted">No ${p === 'up' ? 'urban planning' : 'arch eng'} note for this site — it's covered under the other lens.</div>`;
+    return;
+  }
+  const action = item.querySelector('.q-main .a').textContent;
+  const body = item.querySelector('.q-body').innerHTML;
+  box.innerHTML = `<div class="m-card" style="border-left-color:${divColor(n.dt)}"><div class="m-act">${action}</div>${body}</div>`;
 }
 
 const sheetBackdrop = document.getElementById('sheet-backdrop');
@@ -598,13 +668,6 @@ function closeSheet() { sheetBackdrop.classList.remove('show'); sheetEl.classLis
 sheetBackdrop.addEventListener('click', closeSheet);
 document.getElementById('sheet-close').addEventListener('click', closeSheet);
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
-
-function revealInsight(id, p) {
-  closeSheet();
-  activateTab('tab-insights');
-  setPersona(p);
-  jumpToCard(NODES.find(x => x.id === id));
-}
 
 function drawSpark(n) {
   const data = series(n);
@@ -675,23 +738,12 @@ const tb = document.querySelector('#datatable tbody');
 let persona = 'up';
 function setPersona(p) {
   persona = p;
-  document.querySelectorAll('.seg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.persona === p));
+  document.querySelectorAll('#tab-insights .seg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.persona === p));
   document.getElementById('persona-up').hidden = p !== 'up';
   document.getElementById('persona-ae').hidden = p !== 'ae';
 }
-document.querySelectorAll('.seg button').forEach(b =>
+document.querySelectorAll('#tab-insights .seg button').forEach(b =>
   b.addEventListener('click', () => setPersona(b.dataset.persona)));
-
-function jumpToCard(n) {
-  insightsMap.highlight(n.id);
-  const pane = document.getElementById(persona === 'up' ? 'persona-up' : 'persona-ae');
-  const card = pane.querySelector(`[data-node="${n.id}"]`);
-  if (!card) return;
-  card.open = true;
-  card.scrollIntoView({ behavior:'smooth', block:'center' });
-  card.classList.add('flash');
-  setTimeout(() => card.classList.remove('flash'), 1400);
-}
 
 /* color the queue ΔT stats and row rails from the same diverging ramp as the map */
 document.querySelectorAll('.q-dt[data-dt]').forEach(el => {
@@ -711,7 +763,7 @@ document.querySelectorAll('nav.tabs button').forEach(btn =>
   btn.addEventListener('click', () => activateTab(btn.dataset.tab)));
 
 /* ─── init ─── */
-mainMap = buildMap('map-main', openModal);
+mainMap = buildMap('map-main', openModal, { heat: true });
 insightsMap = buildMap('map-insights', openModal);
 if (location.hash === '#insights') activateTab('tab-insights');
 </script>
