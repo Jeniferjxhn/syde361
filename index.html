@@ -166,18 +166,31 @@
   }
   .seg button[aria-pressed="true"] { background: var(--tile); color: var(--text-primary); box-shadow: var(--shadow); }
 
-  .hero {
-    background: var(--accent-bg); border: 1px solid var(--border); border-radius: 12px;
-    padding: .95rem 1rem; margin-bottom: .7rem;
+  /* ranked priority queue */
+  .queue-h { font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); font-weight: 750; margin: .3rem .15rem .55rem; }
+  details.q-item {
+    background: var(--tile); border: 1px solid var(--border); border-radius: 12px;
+    box-shadow: var(--shadow); margin-bottom: .55rem;
   }
-  .hero .l { font-size: .68rem; text-transform: uppercase; letter-spacing: .05em; color: var(--text-secondary); font-weight: 700; }
-  .hero .v { font-size: 1.15rem; font-weight: 750; letter-spacing: -.01em; margin: .15rem 0; }
-  .hero p { font-size: .84rem; color: var(--text-secondary); }
-
-  .plan-card h3 { font-size: .92rem; display: flex; align-items: center; gap: .45rem; flex-wrap: wrap; }
-  .plan-card p { font-size: .83rem; color: var(--text-secondary); margin-top: .3rem; }
-  .plan-card p b { color: var(--text-primary); }
-  .plan-card.flash { outline: 2px solid var(--blue); outline-offset: 1px; }
+  details.q-item.flash { outline: 2px solid var(--blue); outline-offset: 1px; }
+  details.q-item summary { list-style: none; display: flex; gap: .7rem; align-items: center; padding: .72rem .85rem; cursor: pointer; }
+  details.q-item summary::-webkit-details-marker { display: none; }
+  .q-rank {
+    width: 24px; height: 24px; border-radius: 50%; flex: none;
+    background: var(--surface-2); color: var(--text-secondary);
+    font-size: .78rem; font-weight: 750; display: flex; align-items: center; justify-content: center;
+  }
+  .q-rank.ok { background: color-mix(in srgb, var(--good) 14%, transparent); color: var(--good); }
+  .q-dt { font-size: 1.12rem; font-weight: 750; letter-spacing: -.02em; min-width: 3.3rem; text-align: right; flex: none; font-variant-numeric: tabular-nums; }
+  .q-main { flex: 1; min-width: 0; }
+  .q-main .n { font-weight: 650; font-size: .88rem; }
+  .q-main .a { font-size: .76rem; color: var(--text-secondary); margin-top: .05rem; }
+  .q-main .a::before { content: "→ "; color: var(--text-muted); }
+  .q-chev { flex: none; color: var(--text-muted); transition: transform .18s; font-size: .7rem; }
+  details[open] .q-chev { transform: rotate(180deg); }
+  .q-body { margin: 0 .85rem; padding: .6rem 0 .8rem; border-top: 1px solid var(--border); font-size: .82rem; color: var(--text-secondary); }
+  .q-body b { color: var(--text-primary); }
+  .q-body p + p { margin-top: .45rem; }
   .delta-pair { display: flex; gap: .5rem; margin-top: .55rem; }
   .delta-pair .dp { flex: 1; background: var(--surface-2); border-radius: 8px; padding: .45rem .55rem; }
   .delta-pair .dp .l { font-size: .64rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .03em; }
@@ -256,75 +269,127 @@
 
     <!-- ── urban planning persona ── -->
     <div id="persona-up">
-      <div class="hero">
-        <div class="l">Campus-scale read · 2:40 PM</div>
-        <div class="v">Two sites flagged for intervention</div>
-        <p>Built surfaces are averaging <b>+9.0°C</b> over the vegetated baseline. Lot C and the Ring Road stop are the priority heat sinks; the M4 conversion shows what a siting decision can claw back.</p>
-      </div>
+      <div class="queue-h">Priority queue · campus scale · 2:40 PM</div>
 
-      <div class="card plan-card" data-node="lotc">
-        <h3><span class="badge sink">▲ Strong heat sink</span> Lot C parking</h3>
-        <p>The hottest surface on the network at <b>+14.9°C</b> over control, and it holds heat past 10 PM. Largest contiguous impervious area on this side of campus. <b>Candidate interventions:</b> canopy tree rows between bays, permeable paving at the walking edges. Caution on high-albedo "cool" coating alone — reflected load can raise surface temps on the facades across the drive.</p>
-      </div>
-
-      <div class="card plan-card" data-node="ring">
-        <h3><span class="badge sink">▲ Heat sink flagged</span> Ring Road / Columbia bus stop</h3>
-        <p>Asphalt has held a <b>+11°C surface differential</b> every afternoon this week and keeps radiating 3 hours after sunset — and this is where pedestrians stand and wait with zero shade. <b>Candidate intervention:</b> shade structure or tree planting on the south edge. Highest exposure-hours per square metre of any flagged site.</p>
-      </div>
-
-      <div class="card plan-card" data-node="slc">
-        <h3><span class="badge watch">◆ Watch</span> SLC / QNC courtyard</h3>
-        <p>Concrete plaza runs <b>+7°C</b> at peak with no midday shade — and it's the campus's most-used outdoor sitting area, exactly where people <i>want</i> to be. If any site justifies shade sails or added canopy on comfort-hours gained per dollar, it's this one. Track comfort-hours before and after any change.</p>
-      </div>
-
-      <div class="card plan-card" data-node="m4">
-        <h3><span class="badge cooling">▼ Before / after validated</span> M4 site conversion</h3>
-        <p>The M4 build replaced pavement and a demolished pedestrian bridge with a structure plus planted edges. Same point, compared against the pre-construction baseline:</p>
-        <div class="delta-pair">
-          <div class="dp"><div class="l">Before (paved, Jul 2024)</div><div class="v">ΔT +9.8°C</div></div>
-          <div class="dp"><div class="l">After (built + planted)</div><div class="v">ΔT +3.1°C</div></div>
+      <details class="q-item" data-node="lotc">
+        <summary>
+          <span class="q-rank">1</span><span class="q-dt" data-dt="14.9">+14.9°</span>
+          <span class="q-main"><span class="n">Lot C parking</span><span class="a" style="display:block">Canopy tree rows + permeable edges</span></span>
+          <span class="q-chev">▼</span>
+        </summary>
+        <div class="q-body">
+          <p>The hottest surface on the network, and it holds heat past 10 PM. Largest contiguous impervious area on this side of campus. Caution on high-albedo "cool" coating alone — reflected load can raise surface temps on the facades across the drive.</p>
         </div>
-        <p style="margin-top:.55rem;">A <b>6.7°C reduction</b> in peak differential — measured evidence that the siting decision reduced, rather than compounded, the campus heat-island effect. This is the before/after loop satellite LST can't close.</p>
-      </div>
+      </details>
 
-      <div class="card plan-card" data-node="kens">
-        <h3><span class="badge cooling">● Performing as designed</span> Ken's Garden bed</h3>
-        <p>The planted bed delivers steady cooling — <b>6–8°C below adjacent pavement</b> all afternoon. One caution: reflected heat off neighbouring concrete and glass pushes the bed's east edge ~2°C warmer, and this week's humidity is in the fungal-risk range for the roses. Green infrastructure works here, but only monitoring keeps it working.</p>
-      </div>
+      <details class="q-item" data-node="ring">
+        <summary>
+          <span class="q-rank">2</span><span class="q-dt" data-dt="11.3">+11.3°</span>
+          <span class="q-main"><span class="n">Ring Rd / Columbia stop</span><span class="a" style="display:block">Shade structure on the south edge</span></span>
+          <span class="q-chev">▼</span>
+        </summary>
+        <div class="q-body">
+          <p>Held this differential every afternoon this week and keeps radiating 3 hours after sunset — where pedestrians stand and wait with <b>zero shade</b>. Highest exposure-hours per square metre of any flagged site.</p>
+        </div>
+      </details>
+
+      <details class="q-item" data-node="slc">
+        <summary>
+          <span class="q-rank">3</span><span class="q-dt" data-dt="7">+7.0°</span>
+          <span class="q-main"><span class="n">SLC / QNC courtyard</span><span class="a" style="display:block">Shade sails — track comfort-hours</span></span>
+          <span class="q-chev">▼</span>
+        </summary>
+        <div class="q-body">
+          <p>No midday shade on the campus's most-used outdoor sitting area — exactly where people <i>want</i> to be. Best comfort-hours-per-dollar case on campus; measure before and after any change.</p>
+        </div>
+      </details>
+
+      <details class="q-item" data-node="m4">
+        <summary>
+          <span class="q-rank ok">✓</span><span class="q-dt" data-dt="3.1">+3.1°</span>
+          <span class="q-main"><span class="n">M4 site conversion</span><span class="a" style="display:block">Validated — siting decision worked</span></span>
+          <span class="q-chev">▼</span>
+        </summary>
+        <div class="q-body">
+          <p>Pavement + demolished bridge became a building with planted edges. Same point, against the pre-construction baseline:</p>
+          <div class="delta-pair">
+            <div class="dp"><div class="l">Before (paved, Jul 2024)</div><div class="v">ΔT +9.8°C</div></div>
+            <div class="dp"><div class="l">After (built + planted)</div><div class="v">ΔT +3.1°C</div></div>
+          </div>
+          <p style="margin-top:.5rem;">A <b>6.7°C reduction</b> in peak differential — the before/after loop satellite LST can't close.</p>
+        </div>
+      </details>
+
+      <details class="q-item" data-node="kens">
+        <summary>
+          <span class="q-rank ok">✓</span><span class="q-dt" data-dt="0">0°</span>
+          <span class="q-main"><span class="n">Ken's Garden bed</span><span class="a" style="display:block">Control — performing as designed</span></span>
+          <span class="q-chev">▼</span>
+        </summary>
+        <div class="q-body">
+          <p>Steady <b>6–8°C below adjacent pavement</b> all afternoon. Watch items: reflected heat off neighbouring concrete warms the east edge ~2°C, and this week's humidity is in the fungal-risk range for the roses. Green infrastructure works here — monitoring keeps it working.</p>
+        </div>
+      </details>
     </div>
 
     <!-- ── arch eng persona ── -->
     <div id="persona-ae" hidden>
-      <div class="hero">
-        <div class="l">Building-scale read · 2:40 PM</div>
-        <div class="v">South &amp; west exposures are driving today's loads</div>
-        <p>RCH's south facade is storing heat it will re-radiate into the evening, while M4's passive design is holding its differential to <b>+3.1°C</b>. Envelope and orientation choices are visible in the surface data.</p>
-      </div>
+      <div class="queue-h">Priority queue · building scale · 2:40 PM</div>
 
-      <div class="card plan-card" data-node="rch">
-        <h3><span class="badge sink">▲ Envelope liability</span> RCH south facade</h3>
-        <p>Brick at <b>+8.6°C</b> over control, absorbing through the afternoon and re-radiating into the walkway until ~9 PM. RCH is one of the oldest, least-conditioned buildings on campus — microclimate like this can move indoor temps of unconditioned buildings by up to <b>5°C</b>. <b>Design responses:</b> exterior shading devices on the south glazing, envelope retrofit, or planted buffer to cut reflected gain.</p>
-      </div>
+      <details class="q-item" data-node="rch">
+        <summary>
+          <span class="q-rank">1</span><span class="q-dt" data-dt="8.6">+8.6°</span>
+          <span class="q-main"><span class="n">RCH south facade</span><span class="a" style="display:block">Exterior shading or envelope retrofit</span></span>
+          <span class="q-chev">▼</span>
+        </summary>
+        <div class="q-body">
+          <p>Brick absorbing all afternoon, re-radiating into the walkway until ~9 PM. RCH is old and barely conditioned — microclimate like this can move indoor temps of unconditioned buildings by up to <b>5°C</b>. A planted buffer would also cut reflected gain.</p>
+        </div>
+      </details>
 
-      <div class="card plan-card" data-node="m4">
-        <h3><span class="badge cooling">▼ Passive design working</span> M4 solar chimney</h3>
-        <p>M4's solar chimney — one of only a handful in Canadian buildings — uses exactly the solar exposure this network measures (peak <b>33k lux</b> on site today) to drive natural ventilation instead of mechanical cooling. Post-build surface differential is holding at <b>+3.1°C</b>. This is the per-facade evidence base you'd want when justifying a passive feature on the next project.</p>
-      </div>
+      <details class="q-item" data-node="slc">
+        <summary>
+          <span class="q-rank">2</span><span class="q-dt" data-dt="7">+7.0°</span>
+          <span class="q-main"><span class="n">QNC courtyard exposure</span><span class="a" style="display:block">Size overhangs to the measured sun path</span></span>
+          <span class="q-chev">▼</span>
+        </summary>
+        <div class="q-body">
+          <p><b>48k lux</b> unshaded solar load — what an unprotected south-west exposure looks like in July. Design fins and overhangs to this measured sun path, not rule-of-thumb values, and check how new massing shades (or fails to shade) the plaza.</p>
+        </div>
+      </details>
 
-      <div class="card plan-card" data-node="slc">
-        <h3><span class="badge watch">◆ Orientation case study</span> QNC courtyard exposure</h3>
-        <p>The courtyard's <b>48k lux</b> solar load with no shading is what an unprotected south-west exposure looks like in July. For any building fronting this plaza: size overhangs and fins for this measured sun path rather than rule-of-thumb values, and check how new massing shades (or fails to shade) the outdoor space — sky-view factor cuts both ways.</p>
-      </div>
+      <details class="q-item" data-node="lotc">
+        <summary>
+          <span class="q-rank">3</span><span class="q-dt" data-dt="14.9">+14.9°</span>
+          <span class="q-main"><span class="n">Materials, ranked by ΔT</span><span class="a" style="display:block">Spec against the measured spread</span></span>
+          <span class="q-chev">▼</span>
+        </summary>
+        <div class="q-body">
+          <p>Same solar input today: dark asphalt <b>+14.9°</b> (Lot C) · asphalt/concrete <b>+11.3°</b> (Ring Rd) · brick <b>+8.6°</b> (RCH) · plaza concrete <b>+7.0°</b> (QNC) · planted ground <b>0°</b>. Every cladding and paving spec lands on this line, and the differential compounds into cooling load and operational carbon over a 50–100 year lifespan — Shift:Neutral 2050 is scored on exactly this.</p>
+        </div>
+      </details>
 
-      <div class="card plan-card" data-node="lotc">
-        <h3><span class="badge info">◈ Material choice, measured</span> Surface materials ranked</h3>
-        <p>Today's spread by material, same solar input: dark asphalt <b>+14.9°C</b> (Lot C), aged asphalt/concrete <b>+11.3°C</b> (Ring Rd), brick <b>+8.6°C</b> (RCH), plaza concrete <b>+7.0°C</b> (SLC/QNC), planted ground <b>0</b> (control). Every cladding and paving spec sits somewhere on this line — and the differential compounds into mechanical cooling load and operational carbon over a 50–100 year lifespan (Shift:Neutral 2050 is scored on exactly this).</p>
-      </div>
+      <details class="q-item" data-node="m4">
+        <summary>
+          <span class="q-rank ok">✓</span><span class="q-dt" data-dt="3.1">+3.1°</span>
+          <span class="q-main"><span class="n">M4 solar chimney</span><span class="a" style="display:block">Passive design, working as measured</span></span>
+          <span class="q-chev">▼</span>
+        </summary>
+        <div class="q-body">
+          <p>One of a handful of solar chimneys in Canadian buildings, driven by exactly the solar exposure this network measures (peak <b>33k lux</b> on site today). Post-build differential holding at +3.1°C — the per-facade evidence base for justifying passive features on the next project.</p>
+        </div>
+      </details>
 
-      <div class="card plan-card" data-node="kens">
-        <h3><span class="badge cooling">● Green baseline</span> What "good" measures like</h3>
-        <p>Ken's Garden is the reference: canopy + planted ground holds surface temp within ~3°C of ambient all day. Any envelope or landscape decision can be scored against this line — the differential you leave behind is the mechanical cooling load someone pays for, for the life of the building.</p>
-      </div>
+      <details class="q-item" data-node="kens">
+        <summary>
+          <span class="q-rank ok">✓</span><span class="q-dt" data-dt="0">0°</span>
+          <span class="q-main"><span class="n">Green baseline</span><span class="a" style="display:block">What "good" measures like</span></span>
+          <span class="q-chev">▼</span>
+        </summary>
+        <div class="q-body">
+          <p>Canopy + planted ground holds surface temp within ~3°C of ambient all day. Score any envelope or landscape decision against this line — the differential you leave behind is the mechanical cooling load someone pays for, for the life of the building.</p>
+        </div>
+      </details>
     </div>
 
     <div class="gaps">
@@ -552,10 +617,15 @@ function jumpToCard(n) {
   const pane = document.getElementById(persona === 'up' ? 'persona-up' : 'persona-ae');
   const card = pane.querySelector(`[data-node="${n.id}"]`);
   if (!card) return;
+  card.open = true;
   card.scrollIntoView({ behavior:'smooth', block:'center' });
   card.classList.add('flash');
   setTimeout(() => card.classList.remove('flash'), 1400);
 }
+
+/* color the queue ΔT stats from the same diverging ramp as the map */
+document.querySelectorAll('.q-dt[data-dt]').forEach(el =>
+  el.style.color = divColor(parseFloat(el.dataset.dt)));
 
 /* ─── tabs ─── */
 function activateTab(id) {
