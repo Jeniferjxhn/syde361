@@ -156,39 +156,52 @@
 
   /* persona segmented control */
   .seg {
-    display: flex; gap: 3px; padding: 3px; margin: .9rem 0 .8rem;
-    background: var(--surface-2); border: 1px solid var(--border); border-radius: 11px;
+    display: flex; gap: 4px; padding: 4px; margin: .9rem 0 .9rem;
+    background: var(--surface-2); border-radius: 999px;
   }
   .seg button {
     flex: 1; border: none; background: none; cursor: pointer; font: inherit;
-    font-size: .82rem; font-weight: 650; color: var(--text-muted);
-    padding: .5rem .4rem; border-radius: 8px;
+    font-size: .84rem; font-weight: 650; color: var(--text-muted);
+    padding: .55rem .4rem; border-radius: 999px; transition: color .15s, background .15s;
   }
-  .seg button[aria-pressed="true"] { background: var(--tile); color: var(--text-primary); box-shadow: var(--shadow); }
+  .seg button[aria-pressed="true"] { background: var(--blue); color: #fff; box-shadow: var(--shadow); }
 
   /* ranked priority queue */
-  .queue-h { font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); font-weight: 750; margin: .3rem .15rem .55rem; }
+  .queue-h {
+    display: flex; align-items: baseline; justify-content: space-between;
+    font-size: .7rem; text-transform: uppercase; letter-spacing: .07em;
+    color: var(--text-muted); font-weight: 750; margin: .2rem .15rem .6rem;
+  }
+  .queue-h .r { font-weight: 600; letter-spacing: .02em; text-transform: none; }
   details.q-item {
-    background: var(--tile); border: 1px solid var(--border); border-radius: 12px;
-    box-shadow: var(--shadow); margin-bottom: .55rem;
+    background: var(--tile); border: 1px solid var(--border);
+    border-left-width: 4px; border-radius: 12px;
+    box-shadow: var(--shadow); margin-bottom: .6rem;
+    transition: border-color .15s;
   }
   details.q-item.flash { outline: 2px solid var(--blue); outline-offset: 1px; }
-  details.q-item summary { list-style: none; display: flex; gap: .7rem; align-items: center; padding: .72rem .85rem; cursor: pointer; }
+  details.q-item summary { list-style: none; display: flex; gap: .75rem; align-items: center; padding: .8rem .85rem .8rem .9rem; cursor: pointer; -webkit-tap-highlight-color: transparent; }
   details.q-item summary::-webkit-details-marker { display: none; }
+  details.q-item summary:active { background: var(--surface-2); border-radius: 8px; }
   .q-rank {
-    width: 24px; height: 24px; border-radius: 50%; flex: none;
+    width: 25px; height: 25px; border-radius: 50%; flex: none;
     background: var(--surface-2); color: var(--text-secondary);
-    font-size: .78rem; font-weight: 750; display: flex; align-items: center; justify-content: center;
+    font-size: .76rem; font-weight: 750; display: flex; align-items: center; justify-content: center;
   }
-  .q-rank.ok { background: color-mix(in srgb, var(--good) 14%, transparent); color: var(--good); }
-  .q-dt { font-size: 1.12rem; font-weight: 750; letter-spacing: -.02em; min-width: 3.3rem; text-align: right; flex: none; font-variant-numeric: tabular-nums; }
+  .q-rank.ok { background: color-mix(in srgb, var(--good) 15%, transparent); color: var(--good); }
+  .q-dt {
+    display: flex; flex-direction: column; align-items: flex-end; line-height: 1.05;
+    font-size: 1.28rem; font-weight: 780; letter-spacing: -.03em;
+    min-width: 3.6rem; flex: none; font-variant-numeric: tabular-nums;
+  }
+  .q-dt::after { content: "vs ctrl"; font-size: .56rem; font-weight: 650; color: var(--text-muted); letter-spacing: .04em; margin-top: .1rem; }
   .q-main { flex: 1; min-width: 0; }
-  .q-main .n { font-weight: 650; font-size: .88rem; }
-  .q-main .a { font-size: .76rem; color: var(--text-secondary); margin-top: .05rem; }
-  .q-main .a::before { content: "→ "; color: var(--text-muted); }
-  .q-chev { flex: none; color: var(--text-muted); transition: transform .18s; font-size: .7rem; }
+  .q-main .n { font-weight: 680; font-size: .92rem; letter-spacing: -.01em; }
+  .q-main .a { font-size: .77rem; color: var(--text-muted); margin-top: .12rem; }
+  .q-chev { flex: none; color: var(--text-muted); transition: transform .18s; display: flex; }
+  .q-chev svg { width: 16px; height: 16px; }
   details[open] .q-chev { transform: rotate(180deg); }
-  .q-body { margin: 0 .85rem; padding: .6rem 0 .8rem; border-top: 1px solid var(--border); font-size: .82rem; color: var(--text-secondary); }
+  .q-body { margin: 0 .9rem 0 .95rem; padding: .65rem 0 .85rem; border-top: 1px solid var(--border); font-size: .82rem; color: var(--text-secondary); }
   .q-body b { color: var(--text-primary); }
   .q-body p + p { margin-top: .45rem; }
   .delta-pair { display: flex; gap: .5rem; margin-top: .55rem; }
@@ -259,7 +272,7 @@
         <div class="bar" role="img" aria-label="Color scale from blue (cooler than control) through gray (neutral) to red (strong heat sink)"></div>
         <span>Heat sink</span>
       </div>
-      <div class="cap">Same live map — tap a node to jump to what it means for your discipline.</div>
+      <div class="cap">Tap a node to jump to its insight.</div>
     </div>
 
     <div class="seg" role="group" aria-label="Choose discipline">
@@ -269,13 +282,13 @@
 
     <!-- ── urban planning persona ── -->
     <div id="persona-up">
-      <div class="queue-h">Priority queue · campus scale · 2:40 PM</div>
+      <div class="queue-h"><span>Priority queue · campus scale</span><span class="r">3 flagged · avg +9.0°</span></div>
 
       <details class="q-item" data-node="lotc">
         <summary>
           <span class="q-rank">1</span><span class="q-dt" data-dt="14.9">+14.9°</span>
           <span class="q-main"><span class="n">Lot C parking</span><span class="a" style="display:block">Canopy tree rows + permeable edges</span></span>
-          <span class="q-chev">▼</span>
+          <span class="q-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
         </summary>
         <div class="q-body">
           <p>The hottest surface on the network, and it holds heat past 10 PM. Largest contiguous impervious area on this side of campus. Caution on high-albedo "cool" coating alone — reflected load can raise surface temps on the facades across the drive.</p>
@@ -286,7 +299,7 @@
         <summary>
           <span class="q-rank">2</span><span class="q-dt" data-dt="11.3">+11.3°</span>
           <span class="q-main"><span class="n">Ring Rd / Columbia stop</span><span class="a" style="display:block">Shade structure on the south edge</span></span>
-          <span class="q-chev">▼</span>
+          <span class="q-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
         </summary>
         <div class="q-body">
           <p>Held this differential every afternoon this week and keeps radiating 3 hours after sunset — where pedestrians stand and wait with <b>zero shade</b>. Highest exposure-hours per square metre of any flagged site.</p>
@@ -297,7 +310,7 @@
         <summary>
           <span class="q-rank">3</span><span class="q-dt" data-dt="7">+7.0°</span>
           <span class="q-main"><span class="n">SLC / QNC courtyard</span><span class="a" style="display:block">Shade sails — track comfort-hours</span></span>
-          <span class="q-chev">▼</span>
+          <span class="q-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
         </summary>
         <div class="q-body">
           <p>No midday shade on the campus's most-used outdoor sitting area — exactly where people <i>want</i> to be. Best comfort-hours-per-dollar case on campus; measure before and after any change.</p>
@@ -308,7 +321,7 @@
         <summary>
           <span class="q-rank ok">✓</span><span class="q-dt" data-dt="3.1">+3.1°</span>
           <span class="q-main"><span class="n">M4 site conversion</span><span class="a" style="display:block">Validated — siting decision worked</span></span>
-          <span class="q-chev">▼</span>
+          <span class="q-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
         </summary>
         <div class="q-body">
           <p>Pavement + demolished bridge became a building with planted edges. Same point, against the pre-construction baseline:</p>
@@ -324,7 +337,7 @@
         <summary>
           <span class="q-rank ok">✓</span><span class="q-dt" data-dt="0">0°</span>
           <span class="q-main"><span class="n">Ken's Garden bed</span><span class="a" style="display:block">Control — performing as designed</span></span>
-          <span class="q-chev">▼</span>
+          <span class="q-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
         </summary>
         <div class="q-body">
           <p>Steady <b>6–8°C below adjacent pavement</b> all afternoon. Watch items: reflected heat off neighbouring concrete warms the east edge ~2°C, and this week's humidity is in the fungal-risk range for the roses. Green infrastructure works here — monitoring keeps it working.</p>
@@ -334,13 +347,13 @@
 
     <!-- ── arch eng persona ── -->
     <div id="persona-ae" hidden>
-      <div class="queue-h">Priority queue · building scale · 2:40 PM</div>
+      <div class="queue-h"><span>Priority queue · building scale</span><span class="r">south/west loads peaking</span></div>
 
       <details class="q-item" data-node="rch">
         <summary>
           <span class="q-rank">1</span><span class="q-dt" data-dt="8.6">+8.6°</span>
           <span class="q-main"><span class="n">RCH south facade</span><span class="a" style="display:block">Exterior shading or envelope retrofit</span></span>
-          <span class="q-chev">▼</span>
+          <span class="q-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
         </summary>
         <div class="q-body">
           <p>Brick absorbing all afternoon, re-radiating into the walkway until ~9 PM. RCH is old and barely conditioned — microclimate like this can move indoor temps of unconditioned buildings by up to <b>5°C</b>. A planted buffer would also cut reflected gain.</p>
@@ -351,7 +364,7 @@
         <summary>
           <span class="q-rank">2</span><span class="q-dt" data-dt="7">+7.0°</span>
           <span class="q-main"><span class="n">QNC courtyard exposure</span><span class="a" style="display:block">Size overhangs to the measured sun path</span></span>
-          <span class="q-chev">▼</span>
+          <span class="q-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
         </summary>
         <div class="q-body">
           <p><b>48k lux</b> unshaded solar load — what an unprotected south-west exposure looks like in July. Design fins and overhangs to this measured sun path, not rule-of-thumb values, and check how new massing shades (or fails to shade) the plaza.</p>
@@ -362,7 +375,7 @@
         <summary>
           <span class="q-rank">3</span><span class="q-dt" data-dt="14.9">+14.9°</span>
           <span class="q-main"><span class="n">Materials, ranked by ΔT</span><span class="a" style="display:block">Spec against the measured spread</span></span>
-          <span class="q-chev">▼</span>
+          <span class="q-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
         </summary>
         <div class="q-body">
           <p>Same solar input today: dark asphalt <b>+14.9°</b> (Lot C) · asphalt/concrete <b>+11.3°</b> (Ring Rd) · brick <b>+8.6°</b> (RCH) · plaza concrete <b>+7.0°</b> (QNC) · planted ground <b>0°</b>. Every cladding and paving spec lands on this line, and the differential compounds into cooling load and operational carbon over a 50–100 year lifespan — Shift:Neutral 2050 is scored on exactly this.</p>
@@ -373,7 +386,7 @@
         <summary>
           <span class="q-rank ok">✓</span><span class="q-dt" data-dt="3.1">+3.1°</span>
           <span class="q-main"><span class="n">M4 solar chimney</span><span class="a" style="display:block">Passive design, working as measured</span></span>
-          <span class="q-chev">▼</span>
+          <span class="q-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
         </summary>
         <div class="q-body">
           <p>One of a handful of solar chimneys in Canadian buildings, driven by exactly the solar exposure this network measures (peak <b>33k lux</b> on site today). Post-build differential holding at +3.1°C — the per-facade evidence base for justifying passive features on the next project.</p>
@@ -384,7 +397,7 @@
         <summary>
           <span class="q-rank ok">✓</span><span class="q-dt" data-dt="0">0°</span>
           <span class="q-main"><span class="n">Green baseline</span><span class="a" style="display:block">What "good" measures like</span></span>
-          <span class="q-chev">▼</span>
+          <span class="q-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
         </summary>
         <div class="q-body">
           <p>Canopy + planted ground holds surface temp within ~3°C of ambient all day. Score any envelope or landscape decision against this line — the differential you leave behind is the mechanical cooling load someone pays for, for the life of the building.</p>
@@ -623,9 +636,12 @@ function jumpToCard(n) {
   setTimeout(() => card.classList.remove('flash'), 1400);
 }
 
-/* color the queue ΔT stats from the same diverging ramp as the map */
-document.querySelectorAll('.q-dt[data-dt]').forEach(el =>
-  el.style.color = divColor(parseFloat(el.dataset.dt)));
+/* color the queue ΔT stats and row rails from the same diverging ramp as the map */
+document.querySelectorAll('.q-dt[data-dt]').forEach(el => {
+  const c = divColor(parseFloat(el.dataset.dt));
+  el.style.color = c;
+  el.closest('details.q-item').style.borderLeftColor = c;
+});
 
 /* ─── tabs ─── */
 function activateTab(id) {
