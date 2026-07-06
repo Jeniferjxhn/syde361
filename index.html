@@ -185,6 +185,18 @@
   }
   .mi-bl::before { content: "“"; color: var(--text-muted); }
   .mi-bl::after { content: "”"; color: var(--text-muted); }
+  .qd-hero { display: flex; align-items: center; gap: .85rem; margin: .55rem 0 .3rem; }
+  .qd-hero .big { font-size: 2.1rem; font-weight: 800; letter-spacing: -.04em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .qd-side { display: flex; flex-direction: column; gap: .3rem; align-items: flex-start; }
+  .spark-title { display: flex; align-items: center; gap: .4rem; }
+  .sk-leg { margin-left: auto; display: flex; align-items: center; gap: .35rem; font-size: .68rem; color: var(--text-muted); }
+  .sk-leg i { width: 15px; height: 3px; border-radius: 2px; display: inline-block; }
+  .sk-leg i.dash { background: repeating-linear-gradient(90deg, #9a988f 0 3px, transparent 3px 6px); }
+  .qd-meta {
+    display: flex; flex-wrap: wrap; gap: .25rem .9rem; margin-top: .85rem;
+    padding-top: .6rem; border-top: 1px solid var(--border);
+    font-size: .68rem; color: var(--text-muted); font-variant-numeric: tabular-nums;
+  }
   @media (prefers-reduced-motion: reduce) {
     .sheet, .sheet-backdrop { transition: none; }
   }
@@ -652,6 +664,25 @@ function buildMap(slotId, onNodeClick, opts = {}) {
 
 /* ─── node modal (bottom sheet) + sparkline ─── */
 let mainMap, insightsMap;
+const fmtHour = h => h===0?'12 AM':h<12?`${h} AM`:h===12?'12 PM':`${h-12} PM`;
+
+function weekBars(n) {
+  const vals = Array.from({length:7}, (_,i) =>
+    Math.max(0, +(n.dt + Math.sin(n.x + i*2.1)*1.1 - (6-i)*0.05).toFixed(1)));
+  vals[6] = Math.max(0, n.dt);
+  const labels = ['−6d','−5d','−4d','−3d','−2d','−1d','Today'];
+  const W=520, H=72, PB=16, top=12, maxV = Math.max(4, ...vals);
+  const bw = 46, gap = (W - 7*bw) / 8;
+  let bars = '';
+  vals.forEach((v,i) => {
+    const x = gap + i*(bw+gap), bh = Math.max(2, (v/maxV)*(H-PB-top)), y = H-PB-bh;
+    bars += `<rect x="${x}" y="${y}" width="${bw}" height="${bh}" rx="3" fill="${divColor(v)}"/>`;
+    if (i===6) bars += `<text x="${x+bw/2}" y="${y-4}" text-anchor="middle" style="font:700 11px -apple-system,sans-serif" fill="var(--text-primary)">+${v}°</text>`;
+    bars += `<text x="${x+bw/2}" y="${H-3}" text-anchor="middle" class="axis">${labels[i]}</text>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" style="display:block;width:100%;height:72px" aria-label="Daily peak delta T, last 7 days">
+    <line x1="0" y1="${H-PB}" x2="${W}" y2="${H-PB}" stroke="var(--border)" stroke-width="1"/>${bars}</svg>`;
+}
 
 function openModal(n, mode = 'data') {
   mainMap.highlight(n.id);
@@ -668,16 +699,40 @@ function openModal(n, mode = 'data') {
     </div>`;
   if (mode === 'data') {
     // Heat Map modal — the quantitative view
+    const data = series(n), ctrl = series(CTRL);
+    const peakI = data.indexOf(Math.max(...data)), lowI = data.indexOf(Math.min(...data));
+    const hrsHot = data.filter((v,h) => v - ctrl[h] >= 8).length;
+    const rankIdx = [...NODES].sort((a,b)=>b.dt-a.dt).findIndex(x=>x.id===n.id);
+    const ord = ['Hottest','2nd hottest','3rd hottest','4th hottest','5th hottest','Coolest'][rankIdx];
+    const drift = +((Math.sin(n.x * 1.7) * 0.5 + 0.15).toFixed(1));
     d.innerHTML = head + `
+    <div class="qd-hero">
+      <span class="big" style="color:${divColor(n.dt)}">${n.dt>=0?'+':''}${n.dt}°</span>
+      <span class="qd-side">
+        <span class="mi-chip">${ord} of ${NODES.length} nodes</span>
+        <span class="mi-chip">${drift>=0?'↑':'↓'} ${Math.abs(drift).toFixed(1)}° vs yesterday</span>
+      </span>
+    </div>
     <div class="metrics">
       <div class="metric"><div class="l">Surface</div><div class="v">${n.surf.toFixed(1)}<small>°C</small></div></div>
       <div class="metric"><div class="l">Ambient</div><div class="v">${n.amb.toFixed(1)}<small>°C</small></div></div>
       <div class="metric"><div class="l">Humidity</div><div class="v">${n.rh}<small>%</small></div></div>
       <div class="metric"><div class="l">Solar</div><div class="v">${n.lux.toFixed(1)}<small>k lux</small></div></div>
     </div>
-    <div class="spark-title"><b>${n.dt>=0?'+':''}${n.dt}°C vs control</b> · surface temp, last 24 h</div>
+    <div class="spark-title"><b>Surface vs control</b> · 24 h
+      <span class="sk-leg"><i style="background:${divColor(n.dt)}"></i>surface <i class="dash"></i>control</span></div>
     <div class="spark-wrap" id="sparkwrap"></div>
-    <p style="font-size:.8rem;color:var(--text-secondary);margin-top:.55rem;">${n.note}</p>`;
+    <div class="metrics" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-top:.7rem;">
+      <div class="metric"><div class="l">Peak today</div><div class="v">${Math.max(...data).toFixed(1)}°<small> · ${fmtHour(peakI)}</small></div></div>
+      <div class="metric"><div class="l">Overnight low</div><div class="v">${Math.min(...data).toFixed(1)}°<small> · ${fmtHour(lowI)}</small></div></div>
+      <div class="metric"><div class="l">Hrs ≥ +8° vs ctrl</div><div class="v">${hrsHot}<small> h today</small></div></div>
+    </div>
+    <div class="spark-title" style="margin-top:.85rem;"><b>Daily peak ΔT</b> · last 7 days</div>
+    ${weekBars(n)}
+    <p style="font-size:.8rem;color:var(--text-secondary);margin-top:.6rem;">${n.note}</p>
+    <div class="qd-meta">
+      <span>Node CC-0${NODES.indexOf(n)+1}</span><span>MLX90614 · AHT20 · BH1750</span><span>60 s interval</span><span>Uptime ${(98.4 + (n.x % 13)/10).toFixed(1)}%</span><span>Last packet 2:39 PM</span>
+    </div>`;
     drawSpark(n);
   } else {
     // Insights modal — no raw numbers, just what it means per discipline
@@ -822,9 +877,11 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet()
 
 function drawSpark(n) {
   const data = series(n);
+  const ctrl = n.control ? null : series(CTRL);
+  const all = ctrl ? data.concat(ctrl) : data;
   const wrap = document.getElementById('sparkwrap');
   const W = 520, H = 92, PL = 30, PR = 6, PT = 8, PB = 16;
-  const min = Math.floor(Math.min(...data) - 1), max = Math.ceil(Math.max(...data) + 1);
+  const min = Math.floor(Math.min(...all) - 1), max = Math.ceil(Math.max(...all) + 1);
   const X = i => PL + i * (W - PL - PR) / 23;
   const Y = v => PT + (max - v) * (H - PT - PB) / (max - min);
   const pts = data.map((v,i)=>`${X(i)},${Y(v)}`).join(' ');
@@ -838,6 +895,7 @@ function drawSpark(n) {
       <text class="axis" x="${PL}" y="${H-2}">12 AM</text>
       <text class="axis" x="${X(12)}" y="${H-2}" text-anchor="middle">Noon</text>
       <text class="axis" x="${W-PR}" y="${H-2}" text-anchor="end">11 PM</text>
+      ${ctrl ? `<polyline points="${ctrl.map((v,i)=>`${X(i)},${Y(v)}`).join(' ')}" fill="none" stroke="#9a988f" stroke-width="1.5" stroke-dasharray="3 4" stroke-linejoin="round"/>` : ''}
       <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round"/>
       <line id="xh" x1="0" y1="${PT}" x2="0" y2="${H-PB}" stroke="var(--text-muted)" stroke-width="1" stroke-dasharray="3 3" style="display:none"/>
       <circle id="hpt" r="4" fill="${color}" stroke="var(--tile)" stroke-width="2" style="display:none"/>
@@ -859,7 +917,9 @@ function drawSpark(n) {
     tip.style.display = 'block';
     tip.style.left = (X(i)/W*100) + '%';
     tip.style.top = (Y(data[i])/H*100) + '%';
-    tip.textContent = `${fmtH(i)} · ${data[i].toFixed(1)}°C`;
+    tip.textContent = ctrl
+      ? `${fmtH(i)} · ${data[i].toFixed(1)}° · ctrl ${ctrl[i].toFixed(1)}° · Δ ${(data[i]-ctrl[i])>=0?'+':''}${(data[i]-ctrl[i]).toFixed(1)}°`
+      : `${fmtH(i)} · ${data[i].toFixed(1)}°C`;
   }
   function hide(){ tip.style.display = xh.style.display = hpt.style.display = 'none'; }
   hit.addEventListener('pointermove', e => show(e.clientX));
