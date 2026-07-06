@@ -152,15 +152,39 @@
   .seg.mini { margin: .45rem 0 .55rem; padding: 3px; }
   .seg.mini button { font-size: .76rem; padding: .42rem .4rem; }
   .m-ins-h { font-size: .68rem; text-transform: uppercase; letter-spacing: .07em; color: var(--text-muted); font-weight: 750; margin-top: 1rem; }
-  .m-card {
+  .mi-hero {
+    display: flex; gap: .75rem; align-items: center;
     background: var(--surface-2); border-left: 4px solid var(--border);
-    border-radius: 10px; padding: .7rem .85rem;
-    font-size: .82rem; color: var(--text-secondary);
+    border-radius: 12px; padding: .8rem .9rem; margin-top: .2rem;
   }
-  .m-card .m-act { font-weight: 700; color: var(--text-primary); font-size: .88rem; margin-bottom: .3rem; }
-  .m-card b { color: var(--text-primary); }
-  .m-card p + p { margin-top: .45rem; }
-  .m-card.muted { color: var(--text-muted); }
+  .mi-hero .e { font-size: 1.7rem; flex: none; line-height: 1; }
+  .mi-hero .t { display: block; font-weight: 750; font-size: .98rem; letter-spacing: -.01em; line-height: 1.25; }
+  .mi-hero .s { font-size: .73rem; color: var(--text-muted); font-weight: 600; }
+  .mi-chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .mi-chip {
+    background: var(--surface-2); border-radius: 999px; padding: .28rem .65rem;
+    font-size: .74rem; font-weight: 600; color: var(--text-secondary);
+  }
+  .mi-move { display: flex; gap: .65rem; align-items: flex-start; padding: .5rem .1rem; }
+  .mi-move + .mi-move { border-top: 1px solid var(--border); }
+  .mi-move .ic {
+    width: 32px; height: 32px; border-radius: 9px; flex: none;
+    background: var(--surface-2); display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+  }
+  .mi-move .t { display: block; font-size: .85rem; font-weight: 650; }
+  .mi-move .s { display: block; font-size: .75rem; color: var(--text-muted); }
+  .mi-tag {
+    display: inline-block; margin-top: .25rem; font-size: .64rem; font-weight: 750;
+    letter-spacing: .02em; color: var(--blue); background: var(--accent-bg);
+    border-radius: 5px; padding: .1rem .45rem; text-transform: uppercase;
+  }
+  .mi-bl {
+    font-size: .84rem; color: var(--text-secondary); font-style: italic;
+    padding: .65rem .15rem 0; line-height: 1.45;
+  }
+  .mi-bl::before { content: "“"; color: var(--text-muted); }
+  .mi-bl::after { content: "”"; color: var(--text-muted); }
   @media (prefers-reduced-motion: reduce) {
     .sheet, .sheet-backdrop { transition: none; }
   }
@@ -670,19 +694,122 @@ function openModal(n, mode = 'data') {
   showSheet();
 }
 
+/* structured per-persona briefs powering the insights modal */
+const INS = {
+  up: {
+    lotc: { e:"\ud83c\udf33", act:"Canopy tree rows + permeable edges", rank:"#1 priority \u00b7 campus scale",
+      bl:"One row of trees turns the worst square on this map into an average one \u2014 and this node will show the delta within a season.",
+      chips:["\ud83d\udd25 Hottest surface on the network","\ud83c\udf19 Holds heat past 10 PM","\ud83c\udd7f\ufe0f Largest paved area on this side"],
+      moves:[["\ud83c\udf33","Tree rows between parking bays","Shade the asphalt where it bakes 3:00\u20134:30 PM","Capital \u00b7 next cycle"],
+             ["\ud83e\uddf1","Permeable paving on walking edges","Cuts absorption and stormwater runoff in one move","Capital \u00b7 next cycle"],
+             ["\u26a0\ufe0f","Don't rely on cool coating alone","Reflected load can heat the facades across the drive","Design rule \u00b7 free"]],
+      impact:["\u22125\u20138\u00b0C","Est. peak reduction"], comp:["\u22126.7\u00b0C","Measured at M4"] },
+    ring: { e:"\u26f1\ufe0f", act:"Shade structure on the south edge", rank:"#2 priority \u00b7 campus scale",
+      bl:"This is the cheapest heat-safety win on campus \u2014 and the node underneath can prove it worked within two weeks.",
+      chips:["\ud83d\udd25 +11\u00b0 every afternoon this week","\ud83c\udf19 Radiates 3 h after sunset","\ud83d\ude8f Zero shade where people wait"],
+      moves:[["\u26f1\ufe0f","Shade sail or canopy over the wait area","Highest exposure-hours per square metre flagged","Quick win \u00b7 this term"],
+             ["\ud83c\udf33","Tree planting on the south edge","Permanent shade that compounds year over year","Capital \u00b7 next cycle"],
+             ["\ud83d\udcca","Re-measure exposure-hours after install","This node closes the before/after loop for free","Free \u00b7 automatic"]],
+      impact:["\u22124\u20137\u00b0C","Est. at the wait area"], comp:["3 h","Post-sunset heat tail"] },
+    rch: { e:"\ud83c\udf33", act:"Planted buffer between facade and path", rank:"#3 priority \u00b7 campus scale",
+      bl:"The building can't be rebuilt this decade \u2014 the corridor beside it can be fixed this year.",
+      chips:["\ud83c\udf06 Heat window runs until ~9 PM","\ud83d\udeb6 Busy pedestrian corridor","\ud83e\uddf1 Brick re-radiates after sunset"],
+      moves:[["\ud83c\udf33","Street trees / planted strip on the south walkway","Cuts reflected gain directly onto pedestrians","Low cost \u00b7 this year"],
+             ["\ud83e\udded","Shift summer walking routes to the north side after 6 PM","Zero-cost mitigation while the planting matures","Free \u00b7 immediate"],
+             ["\ud83d\udcca","Track the evening heat tail","The differential after dark is the signal to watch","Free \u00b7 automatic"]],
+      impact:["\u22122\u20134\u00b0C","Est. on the walkway"], comp:["9 PM","When the heat window ends"] },
+    slc: { e:"\u26f1\ufe0f", act:"Shade sails \u2014 track comfort-hours", rank:"#4 priority \u00b7 campus scale",
+      bl:"People already vote for this plaza with their feet; shade just extends its opening hours.",
+      chips:["\u2600\ufe0f No midday shade at all","\ud83e\udd1d Most-used outdoor space on campus"],
+      moves:[["\u26f1\ufe0f","Shade sails over the main seating","People already want to be here \u2014 make noon usable","Quick win \u00b7 this term"],
+             ["\ud83c\udf33","Perimeter canopy planting","The long-term replacement for the sails","Capital \u00b7 next cycle"],
+             ["\ud83d\udcca","Measure comfort-hours before and after","Best cost-per-benefit story on campus","Free \u00b7 automatic"]],
+      impact:["Best ROI","Comfort-hours per dollar"], comp:["48k lux","Midday solar load"] },
+    m4:  { e:"\u2705", act:"Validated \u2014 the siting decision worked", rank:"Proof point \u00b7 campus scale",
+      bl:"This is the slide you show when someone asks whether siting decisions actually matter.",
+      chips:["\u2705 \u22126.7\u00b0C vs the paved baseline","\ud83c\udf31 Planted edges performing"],
+      moves:[["\ud83d\udcce","Cite as precedent in proposals","Pavement \u2192 building + planting, measured at the same point","Free \u00b7 immediate"],
+             ["\ud83d\udd01","Replicate on the next site conversion","The playbook is now evidenced, not hypothetical","Next cycle"],
+             ["\ud83d\udcca","Keep monitoring seasonal drift","One July isn't a full year","Free \u00b7 automatic"]],
+      impact:["+9.8\u2192+3.1\u00b0","Before \u2192 after, measured"], comp:["\u22126.7\u00b0C","Peak differential clawed back"] },
+    kens: { e:"\ud83c\udf3f", act:"Control site \u2014 performing as designed", rank:"Baseline \u00b7 campus scale",
+      bl:"The control site is the product \u2014 every other number on this map is measured against it.",
+      chips:["\ud83c\udf3f 6\u20138\u00b0C below adjacent pavement","\u26a0\ufe0f East edge +2\u00b0 from reflected heat"],
+      moves:[["\ud83c\udf0a","Keep irrigation steady in humid weeks","This week sits in the fungal-risk range for the roses","Low cost \u00b7 weekly"],
+             ["\ud83e\uddf1","Watch reflected heat off the glass and concrete","The bed's east edge runs ~2\u00b0 warmer","Monitor \u00b7 ongoing"],
+             ["\ud83c\udfaf","Use as the baseline for every intervention","Green infrastructure only works if it's monitored","Free \u00b7 standing"]],
+      impact:["6\u20138\u00b0C","Cooler than pavement"], comp:["+2\u00b0","Reflected-heat edge effect"] },
+  },
+  ae: {
+    rch: { e:"\ud83e\ude9f", act:"Exterior shading or envelope retrofit", rank:"#1 priority \u00b7 building scale",
+      bl:"Cheapest cooling retrofit on campus: stop the sun before the brick eats it.",
+      chips:["\ud83d\udd25 +8.6\u00b0 brick, re-radiating to 9 PM","\ud83c\udfda Old, barely conditioned building"],
+      moves:[["\ud83e\ude9f","Exterior shading on the south glazing","Stop the gain before it enters the envelope","Retrofit \u00b7 this year"],
+             ["\ud83e\udde5","Envelope retrofit \u2014 insulation or reflective surface","The oldest buildings feel microclimate hardest","Capital \u00b7 next cycle"],
+             ["\ud83c\udf33","Planted buffer at the facade","Cuts the reflected load onto the walkway too","Low cost \u00b7 this year"]],
+      impact:["\u22645\u00b0C","Indoor swing in unconditioned buildings"], comp:["9 PM","When re-radiation ends"] },
+    ring: { e:"\ud83c\udfd7\ufe0f", act:"Design the shelter for the measured load", rank:"#2 priority \u00b7 building scale",
+      bl:"The shelter brief writes itself \u2014 the loads are already measured, down to the hour.",
+      chips:["\ud83d\udd25 +11\u00b0 pavement underneath","\u2600\ufe0f ~50k lux overhead"],
+      moves:[["\ud83c\udfd7\ufe0f","Spec a high-SRI canopy","A dark roof here becomes a radiant heater","Spec line \u00b7 free"],
+             ["\ud83e\uddf1","No dark paving aprons around the stop","The ground load is the dominant term","Spec line \u00b7 free"],
+             ["\ud83e\ude9f","Pull glazing back from the south edge","A naive glass shelter traps the re-radiated load","Design rule \u00b7 free"]],
+      impact:["+11.3\u00b0","Ground load to design against"], comp:["~50k lux","Overhead solar input"] },
+    slc: { e:"\ud83d\udcd0", act:"Size overhangs to the measured sun path", rank:"#3 priority \u00b7 building scale",
+      bl:"Overhang depth from measured lux beats the handbook table every time a reviewer asks 'why this number?'",
+      chips:["\u2600\ufe0f 48k lux, fully unshaded","\ud83e\udded Unprotected south-west exposure"],
+      moves:[["\ud83d\udcd0","Overhangs and fins sized from measured data","Not rule-of-thumb tables \u2014 this sun path is instrumented","Design input \u00b7 free"],
+             ["\ud83c\udfe2","Model how new massing shades the plaza","Sky-view factor cuts both ways","Study \u00b7 this term"],
+             ["\ud83d\udd2d","Verify after build","The node stays \u2014 validation is free","Free \u00b7 automatic"]],
+      impact:["48k lux","Measured design input"], comp:["SW","Worst exposure on site"] },
+    lotc: { e:"\ud83e\uddf1", act:"Spec materials against the measured spread", rank:"#4 \u00b7 building scale",
+      bl:"Materials are the one variable you control completely \u2014 and the spread is 15 degrees.",
+      chips:["\ud83e\uddf1 Asphalt +14.9\u00b0 \u2192 planted 0\u00b0","\u267b\ufe0f 50\u2013100 year decision lock-in"],
+      moves:[["\ud83e\uddf1","Choose cladding and paving by measured \u0394T","Dark asphalt to planted ground is a 15\u00b0 spread today","Spec line \u00b7 free"],
+             ["\ud83d\udcc9","Count cooling load as operational carbon","The differential compounds for the building's life","Analysis \u00b7 this term"],
+             ["\ud83c\udfaf","Score specs against Shift:Neutral 2050","This is exactly what the commitment is graded on","Reporting \u00b7 standing"]],
+      impact:["+14.9\u21920\u00b0","Material spread, same sun"], comp:["50\u2013100 yr","Lock-in per decision"] },
+    m4:  { e:"\u2705", act:"Passive design, working as measured", rank:"Proof point \u00b7 building scale",
+      bl:"Passive features get value-engineered out when there's no data \u2014 this node is the counter-argument.",
+      chips:["\u2705 +3.1\u00b0 differential, holding","\ud83c\udf2c Solar chimney active"],
+      moves:[["\ud83d\udcce","Use per-facade lux data to justify passive features","One of a handful of solar chimneys in Canada","Free \u00b7 immediate"],
+             ["\ud83d\udd01","Template the approach for the next building","Orientation + passive ventilation, evidenced","Next cycle"],
+             ["\ud83d\udcca","Monitor chimney performance seasonally","July data alone doesn't prove winter behaviour","Free \u00b7 automatic"]],
+      impact:["+3.1\u00b0","Post-build differential"], comp:["33k lux","Driving the chimney today"] },
+    kens: { e:"\ud83c\udf3f", act:"What 'good' measures like", rank:"Baseline \u00b7 building scale",
+      bl:"Every degree of differential you avoid is cooling plant someone never has to buy.",
+      chips:["\ud83c\udf3f Within ~3\u00b0 of ambient, all day"],
+      moves:[["\ud83c\udfaf","Score every envelope decision against this line","The baseline is real, not theoretical","Design rule \u00b7 free"],
+             ["\ud83c\udf33","Treat landscape as load-reduction infrastructure","Measurable cooling capacity, not decoration","Budget line \u00b7 next cycle"],
+             ["\ud83d\udcc9","The differential you leave is the cooling bill","Someone pays it for the life of the building","Reporting \u00b7 standing"]],
+      impact:["~3\u00b0C","Of ambient, all day"], comp:["Baseline","For every spec"] },
+  },
+};
+
 function modalInsight(n, p) {
   document.querySelectorAll('#m-seg button').forEach(b =>
     b.setAttribute('aria-pressed', b.dataset.p === p));
   setPersona(p); // keep the Insights tab in sync with what you chose here
-  const box = document.getElementById('m-insight');
-  const item = document.querySelector(`#persona-${p} [data-node="${n.id}"]`);
-  if (!item) {
-    box.innerHTML = `<div class="m-card muted">No ${p === 'up' ? 'urban planning' : 'arch eng'} note for this site — it's covered under the other lens.</div>`;
-    return;
-  }
-  const action = item.querySelector('.q-main .a').textContent;
-  const body = item.querySelector('.q-body').innerHTML;
-  box.innerHTML = `<div class="m-card" style="border-left-color:${divColor(n.dt)}"><div class="m-act">${action}</div>${body}</div>`;
+  const d = INS[p][n.id];
+  document.getElementById('m-insight').innerHTML = `
+    <div class="mi-hero" style="border-left-color:${divColor(n.dt)}">
+      <span class="e">${d.e}</span>
+      <span><span class="t">${d.act}</span><span class="s">${d.rank}</span></span>
+    </div>
+    <div class="mi-bl">${d.bl}</div>
+    <div class="m-ins-h">${n.dt >= 4 ? "Why it's flagged" : "Why it matters"}</div>
+    <div class="mi-chips">${d.chips.map(c => `<span class="mi-chip">${c}</span>`).join('')}</div>
+    <div class="m-ins-h">Recommended moves</div>
+    ${d.moves.map(m => `
+      <div class="mi-move">
+        <span class="ic">${m[0]}</span>
+        <span><span class="t">${m[1]}</span><span class="s">${m[2]}</span><span class="mi-tag">${m[3]}</span></span>
+      </div>`).join('')}
+    <div class="m-ins-h">The numbers that matter</div>
+    <div class="delta-pair">
+      <div class="dp"><div class="l">${d.impact[1]}</div><div class="v">${d.impact[0]}</div></div>
+      <div class="dp"><div class="l">${d.comp[1]}</div><div class="v">${d.comp[0]}</div></div>
+    </div>`;
 }
 
 const sheetBackdrop = document.getElementById('sheet-backdrop');
