@@ -115,6 +115,7 @@
   .legend .bar { flex: 1; height: 10px; border-radius: 5px;
     background: linear-gradient(90deg, #2a78d6, #86b6ef, #9a988f, #f0a262, #e34948); }
   .legend span { font-size: .7rem; color: var(--text-secondary); white-space: nowrap; }
+  #tab-map .legend .bar { background: linear-gradient(90deg, #2a78d6, #6ebe78, #f0d246, #f0823c, #cd2323); }
 
   .badge { display: inline-flex; align-items: center; gap: .3rem; font-size: .72rem; font-weight: 700; border-radius: 6px; padding: .14rem .5rem; }
   .badge.sink { color: var(--serious); background: color-mix(in srgb, var(--serious) 13%, transparent); }
@@ -545,6 +546,46 @@ const svgNS = 'http://www.w3.org/2000/svg';
 const MAP_W = 1062, MAP_H = 597;
 const MAP_BASE = `<image href="campus-map.webp" x="0" y="0" width="${MAP_W}" height="${MAP_H}" preserveAspectRatio="xMidYMid slice"/>`;
 
+let heatRasterCache = null;
+function heatRaster() {
+  if (heatRasterCache) return heatRasterCache;
+  const W = 133, H = 75; // low-res grid, upscaled smoothly by the browser
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const ctx = c.getContext('2d'), img = ctx.createImageData(W, H);
+  // sample points: the 6 sensor nodes, plus low-weight cool anchors on green space
+  const pts = NODES.map(n => ({ x: n.x, y: n.y, v: n.dt, w: 1 })).concat(
+    [[60,60],[950,110],[90,500],[540,545],[1010,470],[300,430],[720,480]]
+      .map(p => ({ x: p[0], y: p[1], v: -1.5, w: 0.55 })));
+  // LST-style ramp: blue → green → yellow → orange → red
+  const stops = [[0,[42,120,214]],[.25,[110,190,120]],[.5,[240,210,70]],[.72,[240,130,60]],[1,[205,35,35]]];
+  const ramp = t => {
+    t = Math.max(0, Math.min(1, t));
+    for (let i = 0; i < stops.length - 1; i++)
+      if (t >= stops[i][0] && t <= stops[i+1][0]) {
+        const f = (t - stops[i][0]) / (stops[i+1][0] - stops[i][0]);
+        return stops[i][1].map((a,j) => Math.round(a + (stops[i+1][1][j] - a) * f));
+      }
+    return stops[stops.length-1][1];
+  };
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const mx = x * MAP_W / W, my = y * MAP_H / H;
+    let num = 0, den = 0;
+    pts.forEach(p => {
+      const d2 = (mx-p.x)**2 + (my-p.y)**2 + 400;
+      const w = p.w / Math.pow(d2, 1.15);
+      num += w * p.v; den += w;
+    });
+    const v = num / den;
+    const [r,g,b] = ramp((v + 2) / 16);
+    const i = (y * W + x) * 4;
+    img.data[i] = r; img.data[i+1] = g; img.data[i+2] = b;
+    img.data[i+3] = Math.min(185, Math.round(95 + Math.max(0, v) * 7));
+  }
+  ctx.putImageData(img, 0, 0);
+  heatRasterCache = c.toDataURL();
+  return heatRasterCache;
+}
+
 function buildMap(slotId, onNodeClick, opts = {}) {
   const slot = document.getElementById(slotId);
   const svg = document.createElementNS(svgNS,'svg');
@@ -553,30 +594,8 @@ function buildMap(slotId, onNodeClick, opts = {}) {
   svg.setAttribute('aria-label','Campus map with sensor nodes colored by surface-minus-ambient temperature differential');
   svg.innerHTML = MAP_BASE;
   if (opts.heat) {
-    // GIS-style thermal overlay: soft radial plumes scaled by each node's ΔT
-    let defs = '<defs>';
-    let blobs = '<g style="pointer-events:none">';
-    NODES.forEach(n => {
-      const id = `hg-${slotId}-${n.id}`;
-      if (n.dt >= 1.5) {
-        defs += `<radialGradient id="${id}">
-          <stop offset="0%" stop-color="#c22726" stop-opacity="${0.28 + n.dt * 0.022}"/>
-          <stop offset="35%" stop-color="#e34948" stop-opacity="${0.18 + n.dt * 0.014}"/>
-          <stop offset="65%" stop-color="#f0824f" stop-opacity="${0.10 + n.dt * 0.008}"/>
-          <stop offset="85%" stop-color="#eda100" stop-opacity="0.07"/>
-          <stop offset="100%" stop-color="#eda100" stop-opacity="0"/>
-        </radialGradient>`;
-        blobs += `<circle cx="${n.x}" cy="${n.y}" r="${64 + n.dt * 6.5}" fill="url(#${id})"/>`;
-      } else {
-        defs += `<radialGradient id="${id}">
-          <stop offset="0%" stop-color="#2a78d6" stop-opacity="0.32"/>
-          <stop offset="60%" stop-color="#2a78d6" stop-opacity="0.14"/>
-          <stop offset="100%" stop-color="#2a78d6" stop-opacity="0"/>
-        </radialGradient>`;
-        blobs += `<circle cx="${n.x}" cy="${n.y}" r="70" fill="url(#${id})"/>`;
-      }
-    });
-    svg.innerHTML += defs + '</defs>' + blobs + '</g>';
+    // GIS-style continuous thermal raster: IDW interpolation of node ΔT values
+    svg.innerHTML += `<image href="${heatRaster()}" x="0" y="0" width="${MAP_W}" height="${MAP_H}" preserveAspectRatio="none" style="pointer-events:none"/>`;
   }
   const gN = document.createElementNS(svgNS,'g');
   NODES.forEach(n => {
@@ -610,19 +629,22 @@ function buildMap(slotId, onNodeClick, opts = {}) {
 /* ─── node modal (bottom sheet) + sparkline ─── */
 let mainMap, insightsMap;
 
-function openModal(n) {
+function openModal(n, mode = 'data') {
   mainMap.highlight(n.id);
   insightsMap.highlight(n.id);
   const [kc, kl] = klass(n.dt);
   const d = document.getElementById('sheet-content');
-  d.innerHTML = `
+  const head = `
     <div class="head">
       <div>
         <h3>${n.name}</h3>
         <div class="sub">${n.material}</div>
       </div>
       <span class="badge ${kc}">${kl}</span>
-    </div>
+    </div>`;
+  if (mode === 'data') {
+    // Heat Map modal — the quantitative view
+    d.innerHTML = head + `
     <div class="metrics">
       <div class="metric"><div class="l">Surface</div><div class="v">${n.surf.toFixed(1)}<small>°C</small></div></div>
       <div class="metric"><div class="l">Ambient</div><div class="v">${n.amb.toFixed(1)}<small>°C</small></div></div>
@@ -631,18 +653,20 @@ function openModal(n) {
     </div>
     <div class="spark-title"><b>${n.dt>=0?'+':''}${n.dt}°C vs control</b> · surface temp, last 24 h</div>
     <div class="spark-wrap" id="sparkwrap"></div>
-    <p style="font-size:.8rem;color:var(--text-secondary);margin-top:.55rem;">${n.note}</p>
-    <div class="m-ins-h">What it means</div>
+    <p style="font-size:.8rem;color:var(--text-secondary);margin-top:.55rem;">${n.note}</p>`;
+    drawSpark(n);
+  } else {
+    // Insights modal — no raw numbers, just what it means per discipline
+    d.innerHTML = head + `
     <div class="seg mini" id="m-seg" role="group" aria-label="Choose discipline">
       <button data-p="up">Urban planning</button>
       <button data-p="ae">Arch eng</button>
     </div>
     <div id="m-insight"></div>`;
-  d.querySelectorAll('#m-seg button').forEach(b =>
-    b.addEventListener('click', () => modalInsight(n, b.dataset.p)));
-  const hasCurrent = document.querySelector(`#persona-${persona} [data-node="${n.id}"]`);
-  modalInsight(n, hasCurrent ? persona : (persona === 'up' ? 'ae' : 'up'));
-  drawSpark(n);
+    d.querySelectorAll('#m-seg button').forEach(b =>
+      b.addEventListener('click', () => modalInsight(n, b.dataset.p)));
+    modalInsight(n, persona);
+  }
   showSheet();
 }
 
@@ -763,8 +787,8 @@ document.querySelectorAll('nav.tabs button').forEach(btn =>
   btn.addEventListener('click', () => activateTab(btn.dataset.tab)));
 
 /* ─── init ─── */
-mainMap = buildMap('map-main', openModal, { heat: true });
-insightsMap = buildMap('map-insights', openModal);
+mainMap = buildMap('map-main', n => openModal(n, 'data'), { heat: true });
+insightsMap = buildMap('map-insights', n => openModal(n, 'insight'));
 if (location.hash === '#insights') activateTab('tab-insights');
 </script>
 </body>
