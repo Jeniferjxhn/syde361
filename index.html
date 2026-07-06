@@ -202,6 +202,8 @@
   }
   .metrics { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: .4rem; margin: .75rem 0 .2rem; }
   .metric { background: var(--surface-2); border-radius: 8px; padding: .4rem .5rem; }
+  button.metric { font: inherit; text-align: left; cursor: pointer; border: 1.5px solid transparent; color: inherit; }
+  button.metric.sel { border-color: var(--blue); background: color-mix(in srgb, var(--blue) 9%, var(--surface-2)); }
   .metric .l { font-size: .62rem; text-transform: uppercase; letter-spacing: .03em; color: var(--text-muted); }
   .metric .v { font-size: .98rem; font-weight: 700; margin-top: .05rem; }
   .metric .v small { font-weight: 500; font-size: .68rem; color: var(--text-muted); }
@@ -666,6 +668,52 @@ function buildMap(slotId, onNodeClick, opts = {}) {
 let mainMap, insightsMap;
 const fmtHour = h => h===0?'12 AM':h<12?`${h} AM`:h===12?'12 PM':`${h-12} PM`;
 
+const METRICS = {
+  surf: { label:'Surface vs control',  unit:'\u00b0', color:n => divColor(n.dt) },
+  amb:  { label:'Ambient vs control',  unit:'\u00b0', color:() => '#2a78d6' },
+  rh:   { label:'Humidity vs control', unit:'%',  color:() => '#1baf7a' },
+  lux:  { label:'Solar vs control',    unit:'k',  color:() => '#c98500' },
+};
+
+function seriesFor(n, m) {
+  if (m === 'surf') return series(n);
+  const out = [];
+  for (let h = 0; h < 24; h++) {
+    const solar = Math.max(0, Math.sin((h - 6) / 14 * Math.PI));
+    const lag   = Math.max(0, Math.sin((h - 8.5) / 15 * Math.PI));
+    const mix   = 0.55 * solar + 0.45 * lag;
+    const j     = Math.sin(h * 2.7 + n.x);
+    let v;
+    if (m === 'amb')      v = (n.amb - 8) + 8 * mix + j * 0.25;
+    else if (m === 'rh')  v = Math.min(97, n.rh + 16 * (1 - mix) + j * 1.2);
+    else                  v = Math.max(0, n.lux * Math.pow(Math.max(0, Math.sin((h - 5.5) / 14.5 * Math.PI)), 1.4) + j * 0.4 * (solar > 0 ? 1 : 0));
+    out.push(+v.toFixed(1));
+  }
+  out[NOW_H] = m === 'amb' ? n.amb : m === 'rh' ? n.rh : n.lux;
+  return out;
+}
+
+function setMetric(n, m) {
+  document.querySelectorAll('#qd-tiles button').forEach(t =>
+    t.classList.toggle('sel', t.dataset.metric === m));
+  const cfg = METRICS[m], color = cfg.color(n);
+  document.getElementById('qd-title').textContent = cfg.label;
+  document.getElementById('qd-swatch').style.background = color;
+  drawSpark(n, m);
+  const data = seriesFor(n, m), ctrl = seriesFor(CTRL, m);
+  const peakI = data.indexOf(Math.max(...data)), lowI = data.indexOf(Math.min(...data));
+  const u = cfg.unit;
+  let third;
+  if (m === 'surf')      third = ['Hrs \u2265 +8\u00b0 vs ctrl', `${data.filter((v,h) => v - ctrl[h] >= 8).length}<small> h today</small>`];
+  else if (m === 'amb')  third = ['Vs control now', `${(n.amb-CTRL.amb)>=0?'+':''}${(n.amb-CTRL.amb).toFixed(1)}<small>\u00b0</small>`];
+  else if (m === 'rh')   third = ['Vs control now', `${(n.rh-CTRL.rh)>=0?'+':''}${(n.rh-CTRL.rh)}<small>%</small>`];
+  else                   third = ['Full-sun hours', `${data.filter(v => v >= 40).length}<small> h \u2265 40k</small>`];
+  document.getElementById('qd-strip').innerHTML = `
+    <div class="metric"><div class="l">Peak today</div><div class="v">${Math.max(...data).toFixed(1)}${u}<small> \u00b7 ${fmtHour(peakI)}</small></div></div>
+    <div class="metric"><div class="l">${m==='rh'?'Daytime low':'Overnight low'}</div><div class="v">${Math.min(...data).toFixed(1)}${u}<small> \u00b7 ${fmtHour(lowI)}</small></div></div>
+    <div class="metric"><div class="l">${third[0]}</div><div class="v">${third[1]}</div></div>`;
+}
+
 function weekBars(n) {
   const vals = Array.from({length:7}, (_,i) =>
     Math.max(0, +(n.dt + Math.sin(n.x + i*2.1)*1.1 - (6-i)*0.05).toFixed(1)));
@@ -699,9 +747,6 @@ function openModal(n, mode = 'data') {
     </div>`;
   if (mode === 'data') {
     // Heat Map modal — the quantitative view
-    const data = series(n), ctrl = series(CTRL);
-    const peakI = data.indexOf(Math.max(...data)), lowI = data.indexOf(Math.min(...data));
-    const hrsHot = data.filter((v,h) => v - ctrl[h] >= 8).length;
     const rankIdx = [...NODES].sort((a,b)=>b.dt-a.dt).findIndex(x=>x.id===n.id);
     const ord = ['Hottest','2nd hottest','3rd hottest','4th hottest','5th hottest','Coolest'][rankIdx];
     const drift = +((Math.sin(n.x * 1.7) * 0.5 + 0.15).toFixed(1));
@@ -713,27 +758,25 @@ function openModal(n, mode = 'data') {
         <span class="mi-chip">${drift>=0?'↑':'↓'} ${Math.abs(drift).toFixed(1)}° vs yesterday</span>
       </span>
     </div>
-    <div class="metrics">
-      <div class="metric"><div class="l">Surface</div><div class="v">${n.surf.toFixed(1)}<small>°C</small></div></div>
-      <div class="metric"><div class="l">Ambient</div><div class="v">${n.amb.toFixed(1)}<small>°C</small></div></div>
-      <div class="metric"><div class="l">Humidity</div><div class="v">${n.rh}<small>%</small></div></div>
-      <div class="metric"><div class="l">Solar</div><div class="v">${n.lux.toFixed(1)}<small>k lux</small></div></div>
+    <div class="metrics" id="qd-tiles">
+      <button class="metric" data-metric="surf"><div class="l">Surface</div><div class="v">${n.surf.toFixed(1)}<small>°C</small></div></button>
+      <button class="metric" data-metric="amb"><div class="l">Ambient</div><div class="v">${n.amb.toFixed(1)}<small>°C</small></div></button>
+      <button class="metric" data-metric="rh"><div class="l">Humidity</div><div class="v">${n.rh}<small>%</small></div></button>
+      <button class="metric" data-metric="lux"><div class="l">Solar</div><div class="v">${n.lux.toFixed(1)}<small>k lux</small></div></button>
     </div>
-    <div class="spark-title"><b>Surface vs control</b> · 24 h
-      <span class="sk-leg"><i style="background:${divColor(n.dt)}"></i>surface <i class="dash"></i>control</span></div>
+    <div class="spark-title"><b id="qd-title"></b> · 24 h
+      <span class="sk-leg"><i id="qd-swatch"></i>this node <i class="dash"></i>control</span></div>
     <div class="spark-wrap" id="sparkwrap"></div>
-    <div class="metrics" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-top:.7rem;">
-      <div class="metric"><div class="l">Peak today</div><div class="v">${Math.max(...data).toFixed(1)}°<small> · ${fmtHour(peakI)}</small></div></div>
-      <div class="metric"><div class="l">Overnight low</div><div class="v">${Math.min(...data).toFixed(1)}°<small> · ${fmtHour(lowI)}</small></div></div>
-      <div class="metric"><div class="l">Hrs ≥ +8° vs ctrl</div><div class="v">${hrsHot}<small> h today</small></div></div>
-    </div>
+    <div class="metrics" id="qd-strip" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-top:.7rem;"></div>
     <div class="spark-title" style="margin-top:.85rem;"><b>Daily peak ΔT</b> · last 7 days</div>
     ${weekBars(n)}
     <p style="font-size:.8rem;color:var(--text-secondary);margin-top:.6rem;">${n.note}</p>
     <div class="qd-meta">
       <span>Node CC-0${NODES.indexOf(n)+1}</span><span>MLX90614 · AHT20 · BH1750</span><span>60 s interval</span><span>Uptime ${(98.4 + (n.x % 13)/10).toFixed(1)}%</span><span>Last packet 2:39 PM</span>
     </div>`;
-    drawSpark(n);
+    d.querySelectorAll('#qd-tiles button').forEach(t =>
+      t.addEventListener('click', () => setMetric(n, t.dataset.metric)));
+    setMetric(n, 'surf');
   } else {
     // Insights modal — no raw numbers, just what it means per discipline
     d.innerHTML = head + `
@@ -875,23 +918,24 @@ sheetBackdrop.addEventListener('click', closeSheet);
 document.getElementById('sheet-close').addEventListener('click', closeSheet);
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
 
-function drawSpark(n) {
-  const data = series(n);
-  const ctrl = n.control ? null : series(CTRL);
+function drawSpark(n, m = 'surf') {
+  const data = seriesFor(n, m);
+  const ctrl = n.control ? null : seriesFor(CTRL, m);
   const all = ctrl ? data.concat(ctrl) : data;
+  const unit = METRICS[m].unit;
   const wrap = document.getElementById('sparkwrap');
   const W = 520, H = 92, PL = 30, PR = 6, PT = 8, PB = 16;
-  const min = Math.floor(Math.min(...all) - 1), max = Math.ceil(Math.max(...all) + 1);
+  const min = m === 'lux' ? 0 : Math.floor(Math.min(...all) - 1), max = Math.ceil(Math.max(...all) + 1);
   const X = i => PL + i * (W - PL - PR) / 23;
   const Y = v => PT + (max - v) * (H - PT - PB) / (max - min);
   const pts = data.map((v,i)=>`${X(i)},${Y(v)}`).join(' ');
-  const color = divColor(n.dt);
+  const color = METRICS[m].color(n);
   wrap.innerHTML = `
     <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-label="24 hour surface temperature line chart">
       <line x1="${PL}" y1="${Y(min)}" x2="${W-PR}" y2="${Y(min)}" stroke="var(--border)" stroke-width="1"/>
       <line x1="${PL}" y1="${Y(max)}" x2="${W-PR}" y2="${Y(max)}" stroke="var(--border)" stroke-width="1" stroke-dasharray="2 3"/>
-      <text class="axis" x="${PL-4}" y="${Y(max)+3}" text-anchor="end">${max}°</text>
-      <text class="axis" x="${PL-4}" y="${Y(min)+3}" text-anchor="end">${min}°</text>
+      <text class="axis" x="${PL-4}" y="${Y(max)+3}" text-anchor="end">${max}${unit}</text>
+      <text class="axis" x="${PL-4}" y="${Y(min)+3}" text-anchor="end">${min}${unit}</text>
       <text class="axis" x="${PL}" y="${H-2}">12 AM</text>
       <text class="axis" x="${X(12)}" y="${H-2}" text-anchor="middle">Noon</text>
       <text class="axis" x="${W-PR}" y="${H-2}" text-anchor="end">11 PM</text>
@@ -918,8 +962,8 @@ function drawSpark(n) {
     tip.style.left = (X(i)/W*100) + '%';
     tip.style.top = (Y(data[i])/H*100) + '%';
     tip.textContent = ctrl
-      ? `${fmtH(i)} · ${data[i].toFixed(1)}° · ctrl ${ctrl[i].toFixed(1)}° · Δ ${(data[i]-ctrl[i])>=0?'+':''}${(data[i]-ctrl[i]).toFixed(1)}°`
-      : `${fmtH(i)} · ${data[i].toFixed(1)}°C`;
+      ? `${fmtH(i)} · ${data[i].toFixed(1)}${unit} · ctrl ${ctrl[i].toFixed(1)}${unit} · Δ ${(data[i]-ctrl[i])>=0?'+':''}${(data[i]-ctrl[i]).toFixed(1)}${unit}`
+      : `${fmtH(i)} · ${data[i].toFixed(1)}${unit}`;
   }
   function hide(){ tip.style.display = xh.style.display = hpt.style.display = 'none'; }
   hit.addEventListener('pointermove', e => show(e.clientX));
