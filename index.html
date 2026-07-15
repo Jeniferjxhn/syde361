@@ -523,8 +523,8 @@
 
 <div class="wrap">
 
-  <!-- ════════ TAB 1 · HEAT MAP (quantitative) ════════ -->
-  <section class="tab active" id="tab-map" role="tabpanel" aria-label="Heat map">
+  <!-- ════════ TAB 1 · MAP (severity+insights ⇄ live readings) ════════ -->
+  <section class="tab active" id="tab-map" role="tabpanel" aria-label="Map">
 
     <div class="stat-row">
       <div class="stat"><div class="l">Hottest node</div><div class="v" id="stat-hot">—</div><div class="n" id="stat-hot-n">—</div></div>
@@ -543,6 +543,7 @@
       <div class="cap" id="map-cap"></div>
     </div>
 
+    <div id="mode-live-extra" hidden>
     <details class="tblview">
       <summary>View all readings as a table</summary>
       <div class="tablewrap">
@@ -555,23 +556,12 @@
       </div>
     </details>
     <button class="btn-quiet" id="geo-export" style="margin:.1rem 0 .3rem;">⬇ Export nodes as GeoJSON · GIS-ready</button>
-
-  </section>
-
-  <!-- ════════ TAB 2 · INSIGHTS (qualitative, two personas) ════════ -->
-  <section class="tab" id="tab-insights" role="tabpanel" aria-label="Insights">
-
-    <div class="mapcard">
-      <div class="map-slot" id="map-insights"></div>
-      <div class="legend">
-        <span>Cooler than control</span>
-        <div class="bar" role="img" aria-label="Color scale from blue (cooler than control) through gray (neutral) to red (strong heat sink)"></div>
-        <span>Heat sink</span>
-      </div>
-      <div class="cap">Tap a node for its data and what it means.</div>
     </div>
 
-    <div class="seg" role="group" aria-label="Choose discipline">
+    <!-- qualitative mode: persona-framed action queues -->
+    <div id="mode-sev-extra">
+
+    <div class="seg" id="persona-seg" role="group" aria-label="Choose discipline">
       <button aria-pressed="true" data-persona="up">Urban planning</button>
       <button aria-pressed="false" data-persona="ae">Arch eng</button>
     </div>
@@ -723,6 +713,7 @@
       </details>
     </div>
 
+    </div>
 
   </section>
 
@@ -767,11 +758,7 @@
 <nav class="tabs" role="tablist">
   <button role="tab" aria-selected="true" data-tab="tab-map">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3 3.6 5.4A1 1 0 0 0 3 6.3v13.2a1 1 0 0 0 1.4.9L9 18.5l6 2.5 5.4-2.4a1 1 0 0 0 .6-.9V4.5a1 1 0 0 0-1.4-.9L15 5.5 9 3z"/><path d="M9 3v15.5M15 5.5V21"/></svg>
-    Heat Map
-  </button>
-  <button role="tab" aria-selected="false" data-tab="tab-insights">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.2 1 2V18h6v-1.3c0-.8.4-1.5 1-2A7 7 0 0 0 12 2z"/><path d="M9.5 21h5M10 18h4"/></svg>
-    Insights
+    Map
   </button>
   <button role="tab" aria-selected="false" data-tab="tab-community">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -937,7 +924,7 @@ function buildMap(slotId, onNodeClick, opts = {}) {
 }
 
 /* ─── node modal (bottom sheet) + sparkline ─── */
-let mainMap, insightsMap;
+let mainMap;
 const fmtHour = h => h===0?'12 AM':h<12?`${h} AM`:h===12?'12 PM':`${h-12} PM`;
 
 const METRICS = {
@@ -1006,7 +993,6 @@ function weekBars(n) {
 
 function openModal(n, mode = 'data') {
   mainMap.highlight(n.id);
-  insightsMap.highlight(n.id);
   const [kc, kl] = klass(n.dt);
   const d = document.getElementById('sheet-content');
   const head = `
@@ -1265,15 +1251,15 @@ const tb = document.querySelector('#datatable tbody');
   tb.appendChild(tr);
 });
 
-/* ─── tab 2: persona switch + node→card jump ─── */
+/* ─── persona switch (severity mode) ─── */
 let persona = 'up';
 function setPersona(p) {
   persona = p;
-  document.querySelectorAll('#tab-insights .seg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.persona === p));
+  document.querySelectorAll('#persona-seg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.persona === p));
   document.getElementById('persona-up').hidden = p !== 'up';
   document.getElementById('persona-ae').hidden = p !== 'ae';
 }
-document.querySelectorAll('#tab-insights .seg button').forEach(b =>
+document.querySelectorAll('#persona-seg button').forEach(b =>
   b.addEventListener('click', () => setPersona(b.dataset.persona)));
 
 /* color the queue ΔT stats and row rails from the same diverging ramp as the map */
@@ -1704,11 +1690,15 @@ function renderCommunity() {
 document.getElementById('acct-btn').addEventListener('click', openAcctSheet);
 document.getElementById('join-nudge').addEventListener('click', openAcctSheet);
 
-/* ─── heat map mode toggle: qualitative severity overlay ⇄ quantitative live readings ─── */
+/* ─── map mode toggle: qualitative severity+insights ⇄ quantitative live readings ─── */
 function setMapMode(m) {
   document.querySelectorAll('#map-mode button').forEach(b => b.setAttribute('aria-pressed', b.dataset.mode === m));
   document.getElementById('map-main').innerHTML = '';
-  mainMap = buildMap('map-main', n => openModal(n, 'data'), { heat: m === 'sev', severity: m === 'sev' });
+  // the toggle switches the whole lens: severity mode → plain-language insight modal + action queues;
+  // live mode → numeric data modal + readings table & export
+  mainMap = buildMap('map-main', n => openModal(n, m === 'sev' ? 'insight' : 'data'), { heat: m === 'sev', severity: m === 'sev' });
+  document.getElementById('mode-sev-extra').hidden = m !== 'sev';
+  document.getElementById('mode-live-extra').hidden = m === 'sev';
   const leg = document.getElementById('map-legend');
   if (m === 'sev') {
     leg.innerHTML = [...SEV].reverse().map(([,c,l]) => `<span class="sw"><i style="background:${c}"></i>${l}</span>`).join('');
@@ -1745,9 +1735,7 @@ document.getElementById('geo-export').addEventListener('click', () => {
 
 /* ─── init ─── */
 setMapMode('sev');
-insightsMap = buildMap('map-insights', n => openModal(n, 'insight'));
 renderAcctBtn(); renderCommunity();
-if (location.hash === '#insights') activateTab('tab-insights');
 if (location.hash === '#community') activateTab('tab-community');
 </script>
 </body>
