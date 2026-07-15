@@ -111,7 +111,9 @@
     .mapcard svg image { filter: brightness(.82) saturate(.92); }
   }
 
-  .legend { display: flex; align-items: center; gap: .6rem; padding: .6rem .9rem 0; }
+  .legend { display: flex; align-items: center; gap: .6rem; padding: .6rem .9rem 0; flex-wrap: wrap; }
+  .legend .sw { display: inline-flex; align-items: center; gap: .32rem; font-size: .7rem; color: var(--text-secondary); font-weight: 600; }
+  .legend .sw i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
   .legend .bar { flex: 1; height: 10px; border-radius: 5px;
     background: linear-gradient(90deg, #2a78d6, #86b6ef, #9a988f, #f0a262, #e34948); }
   .legend span { font-size: .7rem; color: var(--text-secondary); white-space: nowrap; }
@@ -286,6 +288,198 @@
   .delta-pair .dp .v { font-weight: 750; font-size: 1.05rem; }
 
 
+  /* ─── community layer ─── */
+  .acct-btn {
+    border: 1px solid var(--border); background: var(--tile); color: var(--text-primary);
+    font: inherit; font-size: .78rem; font-weight: 650; border-radius: 999px;
+    padding: .3rem .7rem .3rem .35rem; cursor: pointer; display: inline-flex; align-items: center; gap: .4rem;
+    box-shadow: var(--shadow); flex: none;
+  }
+  .acct-btn.anon { padding: .38rem .8rem; }
+  .acct-btn .av { width: 22px; height: 22px; border-radius: 50%; background: var(--accent-bg); display: inline-flex; align-items: center; justify-content: center; font-size: .8rem; }
+
+  /* pulse hero */
+  .pulse-hero {
+    position: relative; overflow: hidden; border-radius: 18px; margin: .25rem 0 0;
+    padding: 1.05rem 1.1rem 1rem; box-shadow: var(--shadow);
+    border: 1px solid color-mix(in srgb, var(--serious) 22%, var(--border));
+    background:
+      radial-gradient(130% 170% at 100% 0%, color-mix(in srgb, var(--serious) 16%, transparent), transparent 55%),
+      radial-gradient(130% 170% at 0% 110%, color-mix(in srgb, var(--warning) 13%, transparent), transparent 55%),
+      var(--tile);
+  }
+  .pulse-hero .k { font-size: .64rem; text-transform: uppercase; letter-spacing: .09em; font-weight: 800; color: var(--serious); }
+  .pulse-hero .big { font-size: 1.9rem; font-weight: 820; letter-spacing: -.03em; line-height: 1.1; margin-top: .2rem; }
+  .pulse-hero .big small { font-size: 1rem; font-weight: 700; letter-spacing: -.01em; }
+  .pulse-hero .sub { font-size: .76rem; color: var(--text-secondary); font-weight: 550; margin-top: .3rem; }
+  .pulse-hero .row { display: flex; align-items: center; gap: .5rem; margin-top: .65rem; }
+  .avs { display: flex; }
+  .avs span {
+    width: 24px; height: 24px; border-radius: 50%; background: var(--surface-2);
+    border: 2px solid var(--tile); display: inline-flex; align-items: center; justify-content: center;
+    font-size: .78rem; margin-left: -8px;
+  }
+  .avs span:first-child { margin-left: 0; }
+  .avs-n { font-size: .72rem; color: var(--text-muted); font-weight: 650; }
+
+  /* section headers */
+  .rail-h { display: flex; align-items: baseline; justify-content: space-between; margin: 1.25rem .1rem .6rem; }
+  .rail-h .t { font-size: 1.04rem; font-weight: 780; letter-spacing: -.015em; }
+  .rail-h .r { font-size: .7rem; color: var(--text-muted); font-weight: 600; }
+
+  /* spots rail (stories) */
+  .spot-rail { display: flex; gap: .7rem; overflow-x: auto; padding: .15rem .1rem .3rem; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .spot-rail::-webkit-scrollbar { display: none; }
+  .spot { flex: none; width: 66px; background: none; border: none; font: inherit; cursor: pointer; color: var(--text-primary); padding: 0; display: flex; flex-direction: column; align-items: center; }
+  .spot .ring {
+    display: block; width: 58px; height: 58px; border-radius: 50%; padding: 3px; position: relative;
+    background: linear-gradient(140deg, var(--rc1, #f0a262), var(--rc2, #e34948));
+  }
+  .spot .face {
+    width: 100%; height: 100%; border-radius: 50%; background: var(--tile);
+    display: flex; align-items: center; justify-content: center; font-size: 1.45rem;
+    border: 2.5px solid var(--surface-1);
+  }
+  .spot .cnt {
+    position: absolute; bottom: -3px; right: -5px; background: var(--blue); color: #fff;
+    font-size: .58rem; font-weight: 800; border-radius: 999px; padding: .1rem .34rem;
+    border: 2px solid var(--surface-1); font-variant-numeric: tabular-nums;
+  }
+  .spot .n { display: block; max-width: 66px; font-size: .62rem; font-weight: 680; margin-top: .32rem; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* polls v2 */
+  .poll { border-radius: 16px; padding: 1rem 1.05rem .9rem; }
+  .poll .ptag {
+    display: inline-flex; align-items: center; gap: .3rem; font-size: .6rem; font-weight: 820;
+    letter-spacing: .07em; text-transform: uppercase; color: var(--blue); background: var(--accent-bg);
+    border-radius: 5px; padding: .15rem .5rem;
+  }
+  .poll .q { font-weight: 770; font-size: 1rem; letter-spacing: -.015em; margin-top: .5rem; line-height: 1.3; }
+  .poll-opt {
+    position: relative; display: flex; align-items: center; gap: .5rem; width: 100%;
+    border: 1.5px solid transparent; background: var(--surface-2); border-radius: 999px;
+    font: inherit; font-size: .84rem; font-weight: 650; color: var(--text-primary);
+    padding: .6rem .95rem; margin-top: .5rem; cursor: pointer; text-align: left; overflow: hidden;
+  }
+  .poll-opt .fill {
+    position: absolute; inset: 0; width: 0%; border-radius: 999px;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--blue) 30%, transparent), color-mix(in srgb, var(--blue) 12%, transparent));
+  }
+  .poll-opt .t, .poll-opt .pc { position: relative; }
+  .poll-opt .pc { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 780; font-size: .8rem; }
+  .poll-opt.mine { border-color: var(--blue); }
+  .poll .foot { display: flex; align-items: center; gap: .5rem; margin-top: .75rem; }
+  .poll .tot { font-size: .7rem; color: var(--text-muted); font-weight: 600; }
+
+  /* compose entry (pill) */
+  .compose-entry {
+    display: flex; align-items: center; gap: .6rem; width: 100%;
+    background: var(--tile); border: 1px solid var(--border); border-radius: 999px;
+    padding: .45rem .5rem .45rem .55rem; box-shadow: var(--shadow); cursor: pointer;
+    font: inherit; margin-bottom: .8rem; text-align: left;
+  }
+  .compose-entry .av { width: 34px; height: 34px; flex: none; border-radius: 50%; background: var(--accent-bg); display: flex; align-items: center; justify-content: center; font-size: 1.05rem; }
+  .compose-entry .ph { color: var(--text-muted); font-size: .86rem; flex: 1; min-width: 0; font-weight: 550; }
+  .compose-entry .go {
+    width: 34px; height: 34px; flex: none; border-radius: 50%; color: #fff;
+    background: linear-gradient(135deg, var(--blue), #7c5cff);
+    display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 700; line-height: 1;
+  }
+
+  /* feed filter pills */
+  .feed-filter { display: flex; gap: .4rem; margin-bottom: .8rem; }
+  .feed-filter button {
+    border: 1px solid var(--border); background: var(--tile); border-radius: 999px;
+    font: inherit; font-size: .76rem; font-weight: 720; color: var(--text-secondary);
+    padding: .34rem .85rem; cursor: pointer;
+  }
+  .feed-filter button.on { background: var(--text-primary); color: var(--surface-1); border-color: var(--text-primary); }
+
+  /* posts v2 */
+  .cr { display: flex; gap: .7rem; padding: .9rem .95rem; background: var(--tile); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); margin-bottom: .6rem; }
+  .cr .avr { width: 42px; height: 42px; flex: none; border-radius: 50%; padding: 2.5px; background: linear-gradient(140deg, var(--rc1, var(--border)), var(--rc2, var(--border))); }
+  .cr .avr .av { width: 100%; height: 100%; border-radius: 50%; background: var(--surface-2); display: flex; align-items: center; justify-content: center; font-size: 1.12rem; border: 2px solid var(--tile); }
+  .cr .body { flex: 1; min-width: 0; }
+  .cr .whorow { display: flex; align-items: baseline; gap: .45rem; }
+  .cr .who { font-size: .86rem; font-weight: 760; letter-spacing: -.01em; }
+  .cr .who small { font-weight: 550; color: var(--text-muted); font-size: .72rem; }
+  .cr .when { margin-left: auto; flex: none; font-size: .68rem; color: var(--text-muted); font-weight: 550; }
+  .cr .txt { font-size: .9rem; margin-top: .22rem; line-height: 1.5; }
+  .cr .meta2 { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .55rem; align-items: center; }
+  .chip-node {
+    font-size: .68rem; font-weight: 750; color: var(--blue); background: var(--accent-bg);
+    border-radius: 999px; padding: .22rem .6rem; cursor: pointer; border: none; font-family: inherit;
+  }
+  .feel-pill { font-size: .68rem; font-weight: 750; border-radius: 999px; padding: .22rem .6rem; }
+  .act {
+    border: none; background: var(--surface-2); border-radius: 999px;
+    font: inherit; font-size: .74rem; font-weight: 750; color: var(--text-secondary);
+    padding: .3rem .7rem; cursor: pointer; display: inline-flex; align-items: center; gap: .32rem;
+  }
+  .act.on { background: color-mix(in srgb, var(--blue) 14%, transparent); color: var(--blue); }
+  .cr .meta2 .act:first-of-type { margin-left: auto; }
+
+  /* thread sheet */
+  .th-reply { display: flex; gap: .6rem; padding: .7rem 0 0; }
+  .th-reply .av { width: 30px; height: 30px; flex: none; border-radius: 50%; background: var(--surface-2); display: flex; align-items: center; justify-content: center; font-size: .92rem; }
+  .th-reply .b { flex: 1; min-width: 0; background: var(--surface-2); border-radius: 4px 14px 14px 14px; padding: .5rem .7rem; }
+  .th-reply .w { font-size: .74rem; font-weight: 750; }
+  .th-reply .w small { font-weight: 550; color: var(--text-muted); }
+  .th-reply .x { font-size: .84rem; margin-top: .1rem; line-height: 1.45; }
+  .th-input { display: flex; gap: .5rem; margin-top: .9rem; }
+  .th-input input {
+    flex: 1; min-width: 0; border: 1px solid var(--border); background: var(--surface-2); color: inherit;
+    border-radius: 999px; font: inherit; font-size: .84rem; padding: .55rem .85rem;
+  }
+  .th-input input:focus { outline: 2px solid var(--blue); outline-offset: -1px; }
+  .th-input button {
+    flex: none; border: none; border-radius: 999px; background: var(--blue); color: #fff;
+    font: inherit; font-size: .8rem; font-weight: 750; padding: 0 1rem; cursor: pointer;
+  }
+
+  .composer textarea {
+    width: 100%; border: 1px solid var(--border); background: var(--surface-2); color: inherit;
+    border-radius: 9px; font: inherit; font-size: .84rem; padding: .55rem .65rem; resize: none; margin-top: .55rem;
+  }
+  .composer textarea:focus { outline: 2px solid var(--blue); outline-offset: -1px; }
+  .chips-select { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .5rem; }
+  .chips-select button {
+    border: 1px solid var(--border); background: var(--surface-2); border-radius: 999px;
+    font: inherit; font-size: .74rem; font-weight: 600; color: var(--text-secondary); padding: .3rem .65rem; cursor: pointer;
+  }
+  .chips-select button.sel { border-color: var(--blue); color: var(--blue); background: color-mix(in srgb, var(--blue) 10%, transparent); }
+  .btn-primary {
+    width: 100%; margin-top: .7rem; border: none; border-radius: 10px; background: var(--blue); color: #fff;
+    font: inherit; font-size: .88rem; font-weight: 700; padding: .65rem; cursor: pointer;
+  }
+  .btn-primary:disabled { opacity: .45; cursor: default; }
+  .comp-h { font-size: .68rem; text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted); font-weight: 750; margin-top: .7rem; }
+  .comp-h:first-child { margin-top: 0; }
+
+  .pulse-bar { display: flex; height: 10px; border-radius: 5px; overflow: hidden; margin-top: .45rem; background: var(--surface-2); }
+  .pulse-leg { display: flex; flex-wrap: wrap; gap: .3rem .85rem; font-size: .7rem; color: var(--text-secondary); margin-top: .4rem; font-variant-numeric: tabular-nums; }
+  .feel-vote { display: flex; gap: .4rem; margin-top: .45rem; }
+  .feel-vote button {
+    flex: 1; border: 1px solid var(--border); background: var(--surface-2); border-radius: 9px;
+    font: inherit; font-size: .68rem; font-weight: 650; padding: .45rem .15rem; cursor: pointer;
+    color: var(--text-secondary); display: flex; flex-direction: column; align-items: center; gap: .12rem;
+  }
+  .feel-vote button .e { font-size: 1.1rem; }
+  .feel-vote button.sel { border-color: var(--blue); color: var(--blue); background: color-mix(in srgb, var(--blue) 9%, transparent); }
+
+  .acct-form input {
+    width: 100%; border: 1px solid var(--border); background: var(--surface-2); color: inherit;
+    border-radius: 9px; font: inherit; padding: .6rem .7rem; margin-top: .5rem;
+  }
+  .acct-form input:focus { outline: 2px solid var(--blue); outline-offset: -1px; }
+  .av-pick { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .55rem; }
+  .av-pick button { width: 42px; height: 42px; border-radius: 50%; border: 2px solid var(--border); background: var(--surface-2); font-size: 1.25rem; cursor: pointer; }
+  .av-pick button.sel { border-color: var(--blue); background: color-mix(in srgb, var(--blue) 12%, transparent); }
+  .btn-quiet {
+    width: 100%; margin-top: .5rem; border: 1px solid var(--border); border-radius: 10px; background: none;
+    color: var(--text-secondary); font: inherit; font-size: .84rem; font-weight: 650; padding: .6rem; cursor: pointer;
+  }
+
   footer { margin-top: 1.6rem; font-size: .72rem; color: var(--text-muted); }
   footer a { color: var(--blue); }
 </style>
@@ -293,9 +487,12 @@
 <body>
 
 <header class="app">
-  <div class="wrap">
-    <h1><span class="logo">◈</span> Campus Compass</h1>
-    <div class="meta"><span class="live">● Live</span> · 6 nodes reporting · Sun July 6, 2026 · 2:40 PM · UW Campus <span style="opacity:.7">(simulated data)</span></div>
+  <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;gap:.75rem;">
+    <div style="min-width:0;">
+      <h1><span class="logo">◈</span> Campus Compass</h1>
+      <div class="meta"><span class="live">● Live</span> · 6 nodes · <span id="hdr-reports">—</span> reports this week · UW Campus <span style="opacity:.7">(simulated data)</span></div>
+    </div>
+    <button class="acct-btn anon" id="acct-btn">Sign in</button>
   </div>
 </header>
 
@@ -310,14 +507,15 @@
       <div class="stat"><div class="l">Control (green)</div><div class="v" id="stat-ctl">—</div><div class="n">Ken's Garden</div></div>
     </div>
 
+    <div class="seg" id="map-mode" role="group" aria-label="Map view" style="margin:.1rem 0 .7rem;">
+      <button data-mode="sev" aria-pressed="true">Severity map</button>
+      <button data-mode="live" aria-pressed="false">Live readings</button>
+    </div>
+
     <div class="mapcard">
       <div class="map-slot" id="map-main"></div>
-      <div class="legend">
-        <span>Cooler than control</span>
-        <div class="bar" role="img" aria-label="Color scale from blue (cooler than control) through gray (neutral) to red (strong heat sink)"></div>
-        <span>Heat sink</span>
-      </div>
-      <div class="cap">ΔT = surface temp − vegetated control surface (Ken's Garden, MLX90614). Tap a node for detail.</div>
+      <div class="legend" id="map-legend"></div>
+      <div class="cap" id="map-cap"></div>
     </div>
 
     <details class="tblview">
@@ -331,6 +529,7 @@
         </table>
       </div>
     </details>
+    <button class="btn-quiet" id="geo-export" style="margin:.1rem 0 .3rem;">⬇ Export nodes as GeoJSON · GIS-ready</button>
 
   </section>
 
@@ -502,6 +701,31 @@
 
   </section>
 
+  <!-- ════════ TAB 3 · COMMUNITY (people layer) ════════ -->
+  <section class="tab" id="tab-community" role="tabpanel" aria-label="Community">
+
+    <div class="pulse-hero" id="pulse-hero"></div>
+
+    <div class="rail-h"><span class="t">Spots right now</span><span class="r">tap for the story</span></div>
+    <div class="spot-rail" id="spot-rail"></div>
+
+    <div class="rail-h"><span class="t">Live polls</span><span class="r">vote to see results</span></div>
+    <div id="polls"></div>
+
+    <div class="rail-h"><span class="t">The feed</span><span class="r" id="feed-count"></span></div>
+    <button class="compose-entry" id="compose-entry">
+      <span class="av" id="ce-av">🙂</span>
+      <span class="ph">What's it like out there right now?</span>
+      <span class="go">＋</span>
+    </button>
+    <div class="feed-filter" role="group" aria-label="Sort feed" id="feed-sort">
+      <button data-sort="recent" class="on">Recent</button>
+      <button data-sort="top">Most agreed</button>
+    </div>
+    <div id="feed"></div>
+
+  </section>
+
 </div>
 
 <div class="sheet-backdrop" id="sheet-backdrop"></div>
@@ -519,6 +743,10 @@
   <button role="tab" aria-selected="false" data-tab="tab-insights">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.2 1 2V18h6v-1.3c0-.8.4-1.5 1-2A7 7 0 0 0 12 2z"/><path d="M9.5 21h5M10 18h4"/></svg>
     Insights
+  </button>
+  <button role="tab" aria-selected="false" data-tab="tab-community">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Community
   </button>
 </nav>
 
@@ -584,9 +812,20 @@ const svgNS = 'http://www.w3.org/2000/svg';
 const MAP_W = 1062, MAP_H = 597;
 const MAP_BASE = `<image href="campus-map.webp" x="0" y="0" width="${MAP_W}" height="${MAP_H}" preserveAspectRatio="xMidYMid slice"/>`;
 
-let heatRasterCache = null;
-function heatRaster() {
-  if (heatRasterCache) return heatRasterCache;
+/* discrete severity classes (threshold-based, qualitative view) */
+const SEV = [
+  [8,    '#c22726', 'Severe'],
+  [4,    '#f0823c', 'High'],
+  [1.5,  '#f0d246', 'Moderate'],
+  [-1.5, '#9a988f', 'Neutral'],
+  [-99,  '#4a9e5c', 'Cooling'],
+];
+const sevOf = dt => SEV.find(([t]) => dt >= t);
+
+const heatRasterCache = {};
+function heatRaster(quantized) {
+  const key = quantized ? 'q' : 'c';
+  if (heatRasterCache[key]) return heatRasterCache[key];
   const W = 133, H = 75; // low-res grid, upscaled smoothly by the browser
   const c = document.createElement('canvas'); c.width = W; c.height = H;
   const ctx = c.getContext('2d'), img = ctx.createImageData(W, H);
@@ -605,6 +844,7 @@ function heatRaster() {
       }
     return stops[stops.length-1][1];
   };
+  const hex = h => [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
     const mx = x * MAP_W / W, my = y * MAP_H / H;
     let num = 0, den = 0;
@@ -614,14 +854,15 @@ function heatRaster() {
       num += w * p.v; den += w;
     });
     const v = num / den;
-    const [r,g,b] = ramp((v + 2) / 16);
+    // quantized: bin the interpolated field into the discrete severity classes
+    const [r,g,b] = quantized ? hex(sevOf(v)[1]) : ramp((v + 2) / 16);
     const i = (y * W + x) * 4;
     img.data[i] = r; img.data[i+1] = g; img.data[i+2] = b;
     img.data[i+3] = Math.min(185, Math.round(95 + Math.max(0, v) * 7));
   }
   ctx.putImageData(img, 0, 0);
-  heatRasterCache = c.toDataURL();
-  return heatRasterCache;
+  heatRasterCache[key] = c.toDataURL();
+  return heatRasterCache[key];
 }
 
 function buildMap(slotId, onNodeClick, opts = {}) {
@@ -632,8 +873,8 @@ function buildMap(slotId, onNodeClick, opts = {}) {
   svg.setAttribute('aria-label','Campus map with sensor nodes colored by surface-minus-ambient temperature differential');
   svg.innerHTML = MAP_BASE;
   if (opts.heat) {
-    // GIS-style continuous thermal raster: IDW interpolation of node ΔT values
-    svg.innerHTML += `<image href="${heatRaster()}" x="0" y="0" width="${MAP_W}" height="${MAP_H}" preserveAspectRatio="none" style="pointer-events:none"/>`;
+    // GIS-style thermal raster: IDW interpolation of node ΔT values (quantized = severity bins)
+    svg.innerHTML += `<image href="${heatRaster(opts.severity)}" x="0" y="0" width="${MAP_W}" height="${MAP_H}" preserveAspectRatio="none" style="pointer-events:none"/>`;
   }
   const gN = document.createElementNS(svgNS,'g');
   NODES.forEach(n => {
@@ -641,18 +882,20 @@ function buildMap(slotId, onNodeClick, opts = {}) {
     g.setAttribute('class','node'); g.dataset.id = n.id;
     g.setAttribute('role','button');
     g.setAttribute('aria-label', `${n.name}, delta T ${n.dt>=0?'+':''}${n.dt} degrees`);
+    const color = opts.severity ? sevOf(n.dt)[1] : divColor(n.dt);
     const glow = document.createElementNS(svgNS,'circle');
     glow.setAttribute('cx',n.x); glow.setAttribute('cy',n.y);
     glow.setAttribute('r', 26 + Math.max(0,n.dt)*3);
-    glow.setAttribute('fill', divColor(n.dt)); glow.setAttribute('opacity','0.3');
+    glow.setAttribute('fill', color); glow.setAttribute('opacity','0.3');
     const core = document.createElementNS(svgNS,'circle');
     core.setAttribute('class','core');
     core.setAttribute('cx',n.x); core.setAttribute('cy',n.y); core.setAttribute('r',17);
-    core.setAttribute('fill', divColor(n.dt));
+    core.setAttribute('fill', color);
     const t = document.createElementNS(svgNS,'text');
     t.setAttribute('x',n.x); t.setAttribute('y',n.y - (32 + Math.max(0,n.dt)*2.8));
     t.setAttribute('text-anchor','middle');
-    t.textContent = `${n.dt>=0?'+':''}${n.dt}°`;
+    // qualitative view speaks plain language; quantitative view speaks numbers
+    t.textContent = opts.severity ? sevOf(n.dt)[2] : `${n.dt>=0?'+':''}${n.dt}°`;
     g.append(glow, core, t);
     g.addEventListener('click', () => onNodeClick(n));
     gN.appendChild(g);
@@ -771,6 +1014,8 @@ function openModal(n, mode = 'data') {
     <div class="spark-title" style="margin-top:.85rem;"><b>Daily peak ΔT</b> · last 7 days</div>
     ${weekBars(n)}
     <p style="font-size:.8rem;color:var(--text-secondary);margin-top:.6rem;">${n.note}</p>
+    <div class="spark-title" style="margin-top:.85rem;"><b>Community pulse</b> · ${pulseFor(n.id).total} reports</div>
+    ${pulseBar(n.id)}
     <div class="qd-meta">
       <span>Node CC-0${NODES.indexOf(n)+1}</span><span>MLX90614 · AHT20 · BH1750</span><span>60 s interval</span><span>Uptime ${(98.4 + (n.x % 13)/10).toFixed(1)}%</span><span>Last packet 2:39 PM</span>
     </div>`;
@@ -907,7 +1152,9 @@ function modalInsight(n, p) {
     <div class="delta-pair">
       <div class="dp"><div class="l">${d.impact[1]}</div><div class="v">${d.impact[0]}</div></div>
       <div class="dp"><div class="l">${d.comp[1]}</div><div class="v">${d.comp[0]}</div></div>
-    </div>`;
+    </div>
+    ${communityBlock(n)}`;
+  wireFeelVote(n, 'insight');
 }
 
 const sheetBackdrop = document.getElementById('sheet-backdrop');
@@ -1017,10 +1264,425 @@ function activateTab(id) {
 document.querySelectorAll('nav.tabs button').forEach(btn =>
   btn.addEventListener('click', () => activateTab(btn.dataset.tab)));
 
+/* ═══════════ COMMUNITY LAYER ═══════════ */
+const store = {
+  get(k, d) { try { return JSON.parse(localStorage.getItem('cc_' + k)) ?? d; } catch { return d; } },
+  set(k, v) { localStorage.setItem('cc_' + k, JSON.stringify(v)); },
+  del(k) { localStorage.removeItem('cc_' + k); },
+};
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nodeName = id => NODES.find(n => n.id === id).name;
+
+const FEELS = {
+  hot:  { e:'🥵', l:'Too hot',    c:'#e34948' },
+  warm: { e:'😓', l:'Uncomf.',    c:'#f0a262' },
+  ok:   { e:'🙂', l:'Fine',       c:'#9a988f' },
+  cool: { e:'😌', l:'Pleasant',   c:'#35a135' },
+};
+
+/* seeded community state (simulated, deterministic) */
+const PULSE_SEED = {
+  lotc: { hot:41, warm:12, ok:5,  cool:1  },
+  ring: { hot:33, warm:15, ok:6,  cool:1  },
+  rch:  { hot:14, warm:19, ok:9,  cool:2  },
+  slc:  { hot:26, warm:21, ok:12, cool:3  },
+  m4:   { hot:3,  warm:7,  ok:19, cool:9  },
+  kens: { hot:1,  warm:2,  ok:11, cool:34 },
+};
+const SEED_REPORTS = [
+  { id:'s1', node:'ring', feel:'hot',  by:'Priya',  av:'🧑🏽‍🎓', prog:'Planning',  m:41,   ups:23, text:"Waited 15 min for the 19 in full sun. There is literally nowhere to stand that isn't baking." },
+  { id:'s2', node:'lotc', feel:'hot',  by:'Sam',    av:'🧢', prog:'Kin',       m:63,   ups:27, text:"Walked across Lot C in sandals and could feel the asphalt through the soles 💀" },
+  { id:'s3', node:'slc',  feel:'hot',  by:'Marcus', av:'👨🏿‍💻', prog:'CS',        m:118,  ups:18, text:"Courtyard tables are untouchable by noon. Everyone crams onto the two shaded benches by QNC." },
+  { id:'s4', node:'kens', feel:'cool', by:'Wen',    av:'👩🏻‍🔬', prog:'Chem Eng',  m:174,  ups:31, text:"Did my reading here all afternoon — easily 5° cooler than the quad. More of this please." },
+  { id:'s5', node:'ring', feel:'hot',  by:'Leo',    av:'🚴', prog:'Geog',      m:22,   ups:9,  text:"Bus stop needs shade yesterday. Watched someone stand behind the pole for the sliver of shadow." },
+  { id:'s6', node:'m4',   feel:'ok',   by:'Dee',    av:'🧑‍🎤', prog:'Arts',      m:290,  ups:12, text:"New M4 patio is actually pleasant now? The planted edge makes a real difference." },
+  { id:'s7', node:'rch',  feel:'warm', by:'Aisha',  av:'🧕', prog:'Arch',      m:1560, ups:14, text:"The brick wall radiates heat well into the evening — walking past at 8pm felt like an oven door." },
+  { id:'s8', node:'slc',  feel:'warm', by:'Tessa',  av:'👩‍🏫', prog:'Env',       m:246,  ups:8,  text:"Would use the courtyard way more with shade sails. Noon to 2 is basically unusable." },
+  { id:'s9', node:'kens', feel:'cool', by:'Omar',   av:'🌱', prog:'Biology',   m:2900, ups:16, text:"Garden bench is the only outdoor spot I can work from on hot days. Keep it watered!" },
+  { id:'s10',node:'lotc', feel:'hot',  by:'Jess',   av:'🎧', prog:'SYDE',      m:1450, ups:11, text:"Parked in Lot C at 9am, came back at 4 — steering wheel was genuinely too hot to hold." },
+];
+const REPLIES_SEED = {
+  s1: [ { by:'Marcus', av:'👨🏿‍💻', prog:'CS',  m:30, text:'Same at the DC stop — campus needs shade at every stop tbh' },
+        { by:'Tessa',  av:'👩‍🏫', prog:'Env', m:18, text:'The sensors literally back this up: +11° there every afternoon this week' } ],
+  s2: [ { by:'Jess',   av:'🎧', prog:'SYDE', m:44, text:'lot c is a frying pan, confirmed' } ],
+  s4: [ { by:'Priya',  av:'🧑🏽‍🎓', prog:'Planning', m:150, text:'Ken’s Garden supremacy 🌿 best study spot on campus' },
+        { by:'Omar',   av:'🌱', prog:'Biology', m:96, text:'This is what the whole quad could feel like with more canopy' } ],
+};
+const POLLS = [
+  { id:'shade', q:'Where should the next shade structure go?', meta:'Facilities is funding one install this fall',
+    opts:[['Ring Rd bus stop', 214], ['SLC/QNC courtyard', 188], ['RCH south walkway', 102], ['Lot C walking edge', 67]] },
+  { id:'lotc',  q:'Lot C tree rows: worth losing ~14 parking spots?', meta:'The trade-off behind the #1 ranked action',
+    opts:[['Yes — shade wins', 326], ['No — keep the parking', 91]] },
+  { id:'when',  q:'When does campus heat bother you most?', meta:'Helps time shade and water stations',
+    opts:[['11–1', 88], ['1–3', 201], ['3–5', 134], ['After 5', 52]] },
+];
+
+/* user state */
+let me = store.get('user', null);
+let myVotes = store.get('votes', {});      // pollId -> option index
+let myFeels = store.get('feels', {});      // nodeId -> feel key
+let myUps   = store.get('ups', []);        // report ids
+let myReports = store.get('reports', []);  // user-authored reports
+let myReplies = store.get('replies', {});  // reportId -> replies
+let pendingAction = null;
+let feedSort = 'recent';
+
+/* aggregates: seed + user contributions */
+function pulseFor(id) {
+  const p = { ...PULSE_SEED[id] };
+  if (myFeels[id]) p[myFeels[id]]++;
+  myReports.forEach(r => { if (r.node === id) p[r.feel]++; });
+  const total = p.hot + p.warm + p.ok + p.cool;
+  return { ...p, total, hotPct: Math.round((p.hot + p.warm) / total * 100) };
+}
+function pulseBar(id) {
+  const p = pulseFor(id);
+  const seg = k => p[k] ? `<i style="width:${p[k]/p.total*100}%;background:${FEELS[k].c}"></i>` : '';
+  const leg = ['hot','warm','ok','cool'].map(k =>
+    `<span>${FEELS[k].e} ${Math.round(p[k]/p.total*100)}% ${FEELS[k].l}</span>`).join('');
+  return `<div class="pulse-bar">${seg('hot')}${seg('warm')}${seg('ok')}${seg('cool')}</div><div class="pulse-leg">${leg}</div>`;
+}
+function allReports() {
+  const mins = r => r.ts ? Math.max(0, Math.round((Date.now() - r.ts) / 60000)) : r.m;
+  return myReports.concat(SEED_REPORTS).map(r => ({ ...r, mins: mins(r) }));
+}
+const fmtAgo = m => m < 1 ? 'just now' : m < 60 ? `${m}m ago` : m < 1440 ? `${Math.round(m/60)}h ago` : `${Math.round(m/1440)}d ago`;
+const upsOf = r => r.ups + (myUps.includes(r.id) ? 1 : 0);
+const findReport = id => allReports().find(r => r.id === id);
+const repliesOf = r => (REPLIES_SEED[r.id] || []).concat(
+  (myReplies[r.id] || []).map(x => ({ ...x, m: Math.max(0, Math.round((Date.now() - x.ts) / 60000)) })));
+const RINGS = { hot:['#f0a262','#e34948'], warm:['#f0d246','#f0823c'], ok:['#b9b7ae','#9a988f'], cool:['#6ebe78','#1baf7a'] };
+const spotRing = hotPct => hotPct >= 60 ? RINGS.hot : hotPct >= 40 ? RINGS.warm : RINGS.cool;
+
+/* account */
+function requireAcct(fn) {
+  if (me) return fn();
+  pendingAction = fn;
+  openAcctSheet();
+}
+function renderAcctBtn() {
+  const b = document.getElementById('acct-btn');
+  if (me) {
+    b.classList.remove('anon');
+    b.innerHTML = `<span class="av">${me.av}</span>${esc(me.name.split(' ')[0])}`;
+  } else {
+    b.classList.add('anon');
+    b.textContent = 'Sign in';
+  }
+  document.getElementById('ce-av').textContent = me ? me.av : '🙂';
+}
+function openAcctSheet() {
+  const d = document.getElementById('sheet-content');
+  if (!me) {
+    d.innerHTML = `
+      <div class="head"><div><h3>Join Campus Compass</h3>
+        <div class="sub">Report conditions, vote in polls, shape what gets built</div></div></div>
+      <div class="acct-form">
+        <input id="af-name" type="text" maxlength="24" placeholder="Name" autocomplete="off">
+        <input id="af-prog" type="text" maxlength="24" placeholder="Program (optional)" autocomplete="off">
+        <div class="comp-h" style="margin-top:.7rem;">Pick an avatar</div>
+        <div class="av-pick" id="af-avs">${['🙂','😎','🌞','🌿','🔥','🧊','🌈','⚡'].map((e,i) =>
+          `<button data-e="${e}" ${i===0?'class="sel"':''}>${e}</button>`).join('')}</div>
+        <button class="btn-primary" id="af-go">Create account</button>
+      </div>`;
+    let av = '🙂';
+    d.querySelectorAll('#af-avs button').forEach(b => b.addEventListener('click', () => {
+      d.querySelectorAll('#af-avs button').forEach(x => x.classList.remove('sel'));
+      b.classList.add('sel'); av = b.dataset.e;
+    }));
+    d.querySelector('#af-go').addEventListener('click', () => {
+      const name = d.querySelector('#af-name').value.trim();
+      if (!name) { d.querySelector('#af-name').focus(); return; }
+      me = { name, prog: d.querySelector('#af-prog').value.trim(), av };
+      store.set('user', me);
+      renderAcctBtn(); renderCommunity();
+      closeSheet();
+      const fn = pendingAction; pendingAction = null;
+      if (fn) setTimeout(fn, 250);
+    });
+  } else {
+    d.innerHTML = `
+      <div class="head"><div><h3>${me.av} ${esc(me.name)}</h3>
+        <div class="sub">${me.prog ? esc(me.prog) + ' · ' : ''}Campus Compass member</div></div></div>
+      <div class="metrics" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-top:.8rem;">
+        <div class="metric"><div class="l">Reports</div><div class="v">${myReports.length}</div></div>
+        <div class="metric"><div class="l">Poll votes</div><div class="v">${Object.keys(myVotes).length}</div></div>
+        <div class="metric"><div class="l">Feel votes</div><div class="v">${Object.keys(myFeels).length}</div></div>
+      </div>
+      <button class="btn-quiet" id="af-out" style="margin-top:.9rem;">Sign out</button>`;
+    d.querySelector('#af-out').addEventListener('click', () => {
+      me = null; store.del('user');
+      renderAcctBtn(); renderCommunity(); closeSheet();
+    });
+  }
+  showSheet();
+}
+
+/* pulse hero */
+function renderHero() {
+  let total = 0, unc = 0;
+  NODES.forEach(n => { const p = pulseFor(n.id); total += p.total; unc += p.hot + p.warm; });
+  const votes = POLLS.reduce((s,p) => s + p.opts.reduce((a,[,c]) => a+c, 0), 0) + Object.keys(myVotes).length;
+  const hottest = [...NODES].sort((a,b) => pulseFor(b.id).hotPct - pulseFor(a.id).hotPct)[0];
+  document.getElementById('pulse-hero').innerHTML = `
+    <div class="k">● Campus pulse · live</div>
+    <div class="big">${Math.round(unc/total*100)}% <small>say campus is too hot right now</small></div>
+    <div class="sub">🔥 Trending: <b>${nodeName(hottest.id)}</b> · ${pulseFor(hottest.id).total} reports</div>
+    <div class="row">
+      <span class="avs">${['🧑🏽‍🎓','👨🏿‍💻','👩🏻‍🔬','🧢','🌱'].map(e => `<span>${e}</span>`).join('')}</span>
+      <span class="avs-n">${total.toLocaleString()} reports · ${votes.toLocaleString()} poll votes this week</span>
+    </div>`;
+  document.getElementById('hdr-reports').textContent = total.toLocaleString();
+}
+
+/* spots rail (stories) */
+function renderRail() {
+  document.getElementById('spot-rail').innerHTML = [...NODES].sort((a,b) => b.dt - a.dt).map(n => {
+    const p = pulseFor(n.id);
+    const [c1,c2] = spotRing(p.hotPct);
+    const dom = ['hot','warm','ok','cool'].reduce((a,b) => p[a] >= p[b] ? a : b);
+    return `<button class="spot" data-n="${n.id}" aria-label="${n.name} community story">
+      <span class="ring" style="--rc1:${c1};--rc2:${c2}">
+        <span class="face">${FEELS[dom].e}</span>
+        <span class="cnt">${Math.max(1, Math.round(p.total / 7))}</span>
+      </span>
+      <span class="n">${n.name.replace(" (control)","").replace(" (post-build)","")}</span>
+    </button>`;
+  }).join('');
+  document.querySelectorAll('#spot-rail .spot').forEach(b =>
+    b.addEventListener('click', () => openModal(NODES.find(n => n.id === b.dataset.n), 'insight')));
+}
+
+/* polls */
+function renderPolls() {
+  const AV = ['🧑🏽‍🎓','👨🏿‍💻','🧕','🚴','👩‍🏫'];
+  document.getElementById('polls').innerHTML = POLLS.map((p, pi) => {
+    const mine = myVotes[p.id];
+    const voted = mine !== undefined;
+    const counts = p.opts.map(([,c], i) => c + (mine === i ? 1 : 0));
+    const total = counts.reduce((a,b) => a+b, 0);
+    return `<div class="card poll" data-poll="${p.id}">
+      <span class="ptag">● Live poll</span>
+      <div class="q">${p.q}</div>
+      ${p.opts.map(([label], i) => {
+        const pct = Math.round(counts[i] / total * 100);
+        return `<button class="poll-opt ${mine === i ? 'mine' : ''}" data-i="${i}">
+          ${voted ? `<span class="fill" style="width:${pct}%"></span>` : ''}
+          <span class="t">${mine === i ? '✓ ' : ''}${label}</span>
+          ${voted ? `<span class="pc">${pct}%</span>` : ''}
+        </button>`;
+      }).join('')}
+      <div class="foot">
+        <span class="avs">${AV.slice(pi, pi + 3).map(e => `<span>${e}</span>`).join('')}</span>
+        <span class="tot">${total.toLocaleString()} voted · ${voted ? 'tap to change yours' : p.meta}</span>
+      </div>
+    </div>`;
+  }).join('');
+  document.querySelectorAll('.poll .poll-opt').forEach(b =>
+    b.addEventListener('click', () => {
+      const pid = b.closest('.poll').dataset.poll, i = +b.dataset.i;
+      requireAcct(() => {
+        myVotes[pid] = i; store.set('votes', myVotes);
+        renderPolls(); renderHero();
+      });
+    }));
+}
+
+/* feed */
+function postHTML(r, inThread = false) {
+  const [c1,c2] = RINGS[r.feel], f = FEELS[r.feel];
+  const nR = repliesOf(r).length;
+  return `<div class="cr" ${inThread ? 'style="box-shadow:none;border:none;padding:.3rem 0 .2rem;margin:0;"' : ''}>
+    <span class="avr" style="--rc1:${c1};--rc2:${c2}"><span class="av">${r.av}</span></span>
+    <div class="body">
+      <div class="whorow"><span class="who">${esc(r.by)} <small>${r.prog ? esc(r.prog) : ''}</small></span><span class="when">${fmtAgo(r.mins)}</span></div>
+      ${r.text ? `<div class="txt">${esc(r.text)}</div>` : ''}
+      <div class="meta2">
+        <button class="chip-node" data-node="${r.node}">📍 ${nodeName(r.node)}</button>
+        <span class="feel-pill" style="color:${f.c};background:color-mix(in srgb,${f.c} 13%,transparent)">${f.e} ${f.l}</span>
+        <button class="act th" data-id="${r.id}">💬${nR ? ' ' + nR : ''}</button>
+        <button class="act up ${myUps.includes(r.id) ? 'on' : ''}" data-id="${r.id}">▲ ${upsOf(r)}</button>
+      </div>
+    </div>
+  </div>`;
+}
+function wireFeedRows(root, fromThread = false) {
+  root.querySelectorAll('.act.up').forEach(b =>
+    b.addEventListener('click', () => requireAcct(() => {
+      const id = b.dataset.id;
+      myUps = myUps.includes(id) ? myUps.filter(x => x !== id) : myUps.concat(id);
+      store.set('ups', myUps);
+      fromThread ? openThread(findReport(id)) : renderFeed();
+    })));
+  root.querySelectorAll('.chip-node').forEach(b =>
+    b.addEventListener('click', () => openModal(NODES.find(n => n.id === b.dataset.node), 'insight')));
+  root.querySelectorAll('.act.th').forEach(b =>
+    b.addEventListener('click', () => { if (!fromThread) openThread(findReport(b.dataset.id)); }));
+}
+function renderFeed() {
+  const rows = allReports().sort((a,b) => feedSort === 'top' ? upsOf(b) - upsOf(a) : a.mins - b.mins);
+  document.getElementById('feed-count').textContent = `${rows.length} posts`;
+  const feed = document.getElementById('feed');
+  feed.innerHTML = rows.map(r => postHTML(r)).join('');
+  wireFeedRows(feed);
+}
+document.querySelectorAll('#feed-sort button').forEach(b =>
+  b.addEventListener('click', () => {
+    feedSort = b.dataset.sort;
+    document.querySelectorAll('#feed-sort button').forEach(x => x.classList.toggle('on', x === b));
+    renderFeed();
+  }));
+
+/* thread sheet */
+function openThread(r) {
+  const d = document.getElementById('sheet-content');
+  const reps = repliesOf(r);
+  d.innerHTML = `
+    <div class="head"><div><h3>Post</h3><div class="sub">📍 ${nodeName(r.node)}</div></div></div>
+    <div style="margin-top:.5rem;border-bottom:1px solid var(--border);padding-bottom:.5rem;">${postHTML(r, true)}</div>
+    <div class="m-ins-h" style="margin-top:.7rem;">Replies${reps.length ? ` · ${reps.length}` : ''}</div>
+    ${reps.map(x => `
+      <div class="th-reply"><span class="av">${x.av}</span>
+        <div class="b"><div class="w">${esc(x.by)} <small>· ${x.prog ? esc(x.prog) + ' · ' : ''}${fmtAgo(x.m)}</small></div>
+        <div class="x">${esc(x.text)}</div></div>
+      </div>`).join('') || '<div style="font-size:.82rem;color:var(--text-muted);padding:.35rem 0;">No replies yet — start the thread.</div>'}
+    <div class="th-input">
+      <input id="th-in" maxlength="200" placeholder="${me ? `Reply as ${esc(me.name.split(' ')[0])}…` : 'Sign in to reply…'}" autocomplete="off">
+      <button id="th-send">Reply</button>
+    </div>`;
+  wireFeedRows(d, true);
+  const send = () => {
+    const text = d.querySelector('#th-in').value.trim();
+    if (!text) { d.querySelector('#th-in').focus(); return; }
+    requireAcct(() => {
+      myReplies[r.id] = (myReplies[r.id] || []).concat({ by: me.name, av: me.av, prog: me.prog, ts: Date.now(), text });
+      store.set('replies', myReplies);
+      renderFeed();
+      openThread(findReport(r.id));
+    });
+  };
+  d.querySelector('#th-send').addEventListener('click', send);
+  d.querySelector('#th-in').addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
+  showSheet();
+}
+
+/* compose sheet */
+let compNode = null, compFeel = null;
+function openCompose() {
+  compNode = compFeel = null;
+  const d = document.getElementById('sheet-content');
+  d.innerHTML = `
+    <div class="head"><div><h3>Report conditions</h3><div class="sub">Your post feeds the live pulse and the priority queue</div></div></div>
+    <div class="composer" style="margin-top:.5rem;">
+      <div class="comp-h">Where are you?</div>
+      <div class="chips-select" id="comp-node"></div>
+      <div class="comp-h">How does it feel?</div>
+      <div class="feel-vote" id="comp-feel"></div>
+      <textarea id="comp-text" rows="3" maxlength="240" placeholder="What's it like there right now? (optional)"></textarea>
+      <button class="btn-primary" id="comp-post" disabled>Post report</button>
+    </div>`;
+  const paint = () => {
+    d.querySelector('#comp-node').innerHTML = NODES.map(n =>
+      `<button data-n="${n.id}" class="${compNode === n.id ? 'sel' : ''}">${n.name}</button>`).join('');
+    d.querySelector('#comp-feel').innerHTML = Object.entries(FEELS).map(([k,f]) =>
+      `<button data-f="${k}" class="${compFeel === k ? 'sel' : ''}"><span class="e">${f.e}</span>${f.l}</button>`).join('');
+    const post = d.querySelector('#comp-post');
+    post.disabled = !(compNode && compFeel);
+    post.textContent = (!me && !post.disabled) ? 'Sign in & post' : 'Post report';
+    d.querySelectorAll('#comp-node button').forEach(b =>
+      b.addEventListener('click', () => { compNode = b.dataset.n; paint(); }));
+    d.querySelectorAll('#comp-feel button').forEach(b =>
+      b.addEventListener('click', () => { compFeel = b.dataset.f; paint(); }));
+  };
+  paint();
+  d.querySelector('#comp-post').addEventListener('click', () => {
+    const text = d.querySelector('#comp-text').value.trim();
+    requireAcct(() => {
+      myReports = [{ id: 'u' + Date.now(), node: compNode, feel: compFeel, text,
+        by: me.name, av: me.av, prog: me.prog, ts: Date.now(), ups: 0 }].concat(myReports);
+      store.set('reports', myReports);
+      renderCommunity(); closeSheet();
+    });
+  });
+  showSheet();
+}
+document.getElementById('compose-entry').addEventListener('click', openCompose);
+
+/* community block inside the Insights modal */
+function communityBlock(n) {
+  const p = pulseFor(n.id);
+  const quote = allReports().filter(r => r.node === n.id).sort((a,b) => upsOf(b) - upsOf(a))[0];
+  const mine = myFeels[n.id];
+  return `
+    <div class="m-ins-h">What people say · ${p.total} reports</div>
+    <div class="mi-chips">
+      <span class="mi-chip">${p.hotPct >= 50 ? '🥵' : '🙂'} ${p.hotPct}% say it's too hot here</span>
+      ${quote ? `<span class="mi-chip">▲ ${upsOf(quote)} agree with the top post</span>` : ''}
+    </div>
+    ${quote && quote.text ? `<div class="mi-bl">${esc(quote.text)} <span style="font-style:normal;font-size:.72rem;color:var(--text-muted)">— ${esc(quote.by)}, ${fmtAgo(quote.mins)}</span></div>` : ''}
+    <div class="m-ins-h">How does it feel right now?</div>
+    <div class="feel-vote" id="m-feel">${Object.entries(FEELS).map(([k,f]) =>
+      `<button data-f="${k}" class="${mine === k ? 'sel' : ''}"><span class="e">${f.e}</span>${f.l}</button>`).join('')}</div>`;
+}
+function wireFeelVote(n) {
+  document.querySelectorAll('#m-feel button').forEach(b =>
+    b.addEventListener('click', () => requireAcct(() => {
+      myFeels[n.id] = b.dataset.f; store.set('feels', myFeels);
+      renderCommunity();
+      openModal(n, 'insight');
+    })));
+}
+
+function renderCommunity() {
+  renderHero(); renderRail(); renderPolls(); renderFeed();
+}
+document.getElementById('acct-btn').addEventListener('click', openAcctSheet);
+
+/* ─── heat map mode toggle: qualitative severity overlay ⇄ quantitative live readings ─── */
+function setMapMode(m) {
+  document.querySelectorAll('#map-mode button').forEach(b => b.setAttribute('aria-pressed', b.dataset.mode === m));
+  document.getElementById('map-main').innerHTML = '';
+  mainMap = buildMap('map-main', n => openModal(n, 'data'), { heat: m === 'sev', severity: m === 'sev' });
+  const leg = document.getElementById('map-legend');
+  if (m === 'sev') {
+    leg.innerHTML = [...SEV].reverse().map(([,c,l]) => `<span class="sw"><i style="background:${c}"></i>${l}</span>`).join('');
+    document.getElementById('map-cap').textContent = 'Threshold-based severity vs the vegetated control. Interpolated between nodes (IDW). Tap a node for its data and trend.';
+  } else {
+    leg.innerHTML = `<span>Cooler than control</span>
+      <div class="bar" role="img" style="background:linear-gradient(90deg,#2a78d6,#86b6ef,#9a988f,#e8b184,#f0824f,#e34948,#c22726)" aria-label="Color scale from blue (cooler than control) through gray (neutral) to red (strong heat sink)"></div>
+      <span>Heat sink</span>`;
+    document.getElementById('map-cap').textContent = 'Live per-node readings. ΔT = surface temp − vegetated control surface (Ken’s Garden, MLX90614). Tap a node for detail.';
+  }
+}
+document.querySelectorAll('#map-mode button').forEach(b =>
+  b.addEventListener('click', () => setMapMode(b.dataset.mode)));
+
+/* GeoJSON export — GIS-compatible per-node readings (approx. campus coordinates) */
+document.getElementById('geo-export').addEventListener('click', () => {
+  const gj = { type: 'FeatureCollection', features: NODES.map((n, i) => ({
+    type: 'Feature',
+    geometry: { type: 'Point', coordinates: [
+      +(-80.5500 + n.x / MAP_W * 0.0120).toFixed(6),
+      +(43.4760 - n.y / MAP_H * 0.0070).toFixed(6) ] },
+    properties: {
+      node: `CC-0${i+1}`, name: n.name, surface_type: n.material,
+      surface_c: n.surf, ambient_c: n.amb, rh_pct: n.rh, lux_k: n.lux,
+      delta_t_vs_control_c: n.dt, severity: sevOf(n.dt)[2], is_control: !!n.control,
+    },
+  })) };
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(gj, null, 2)], { type: 'application/geo+json' }));
+  a.download = 'campus-compass-nodes.geojson';
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
 /* ─── init ─── */
-mainMap = buildMap('map-main', n => openModal(n, 'data'), { heat: true });
+setMapMode('sev');
 insightsMap = buildMap('map-insights', n => openModal(n, 'insight'));
+renderAcctBtn(); renderCommunity();
 if (location.hash === '#insights') activateTab('tab-insights');
+if (location.hash === '#community') activateTab('tab-community');
 </script>
 </body>
 </html>
