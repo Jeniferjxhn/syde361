@@ -6,14 +6,16 @@
 <title>Campus Compass — UW Microclimate Network</title>
 <style>
   :root {
-    --surface-1: #fcfcfb;
-    --surface-2: #f3f2ef;
-    --border: #e2e0da;
-    --text-primary: #0b0b0b;
+    --surface-1: #fbfaf7;
+    --surface-2: #f3f1ea;
+    --border: #e7e4da;
+    --text-primary: #171614;
     --text-secondary: #52514e;
     --text-muted: #7a7873;
     --blue: #2a78d6;
-    --accent-bg: #cde2fb;
+    --violet: #7c5cff;
+    --grad: linear-gradient(135deg, #2a78d6, #7c5cff);
+    --accent-bg: #dbe9fb;
     --good: #008300;
     --warning: #b87700;
     --serious: #c43c3b;
@@ -22,7 +24,7 @@
     --green-space: #d4e6cf;
     --building: #dbd8d0;
     --road: #c9c6bd;
-    --shadow: 0 1px 3px rgba(0,0,0,.07);
+    --shadow: 0 2px 10px rgba(60,50,30,.06);
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -42,7 +44,9 @@
       --green-space: #23331f;
       --building: #33322e;
       --road: #3c3a34;
-      --shadow: 0 1px 3px rgba(0,0,0,.45);
+      --violet: #8d70ff;
+      --grad: linear-gradient(135deg, #3987e5, #8d70ff);
+      --shadow: 0 2px 10px rgba(0,0,0,.45);
     }
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -50,7 +54,7 @@
   body {
     background: var(--surface-1);
     color: var(--text-primary);
-    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font: 15px/1.5 ui-rounded, "SF Pro Rounded", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     padding-bottom: 5.5rem;
     overflow-x: hidden;
   }
@@ -64,7 +68,7 @@
     margin-bottom: 1rem;
   }
   header.app h1 { font-size: 1.15rem; letter-spacing: -.01em; display: flex; align-items: center; gap: .5rem; }
-  header.app h1 .logo { width: 22px; height: 22px; border-radius: 6px; background: var(--blue); display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: .8rem; }
+  header.app h1 .logo { width: 24px; height: 24px; border-radius: 8px; background: var(--grad); display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: .85rem; box-shadow: var(--shadow); }
   header.app .meta { font-size: .8rem; color: var(--text-muted); margin-top: .2rem; }
   header.app .meta .live { color: var(--good); font-weight: 600; }
 
@@ -76,11 +80,12 @@
   }
   nav.tabs button {
     flex: 1; background: none; border: none; cursor: pointer;
-    padding: .6rem 0 .55rem; font: inherit; font-size: .78rem; font-weight: 600;
-    color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: .15rem;
+    padding: .5rem 0 .5rem; font: inherit; font-size: .78rem; font-weight: 650;
+    color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: .18rem;
   }
-  nav.tabs button svg { width: 22px; height: 22px; }
+  nav.tabs button svg { width: 22px; height: 22px; padding: 3px 14px; border-radius: 999px; transition: background .18s; }
   nav.tabs button[aria-selected="true"] { color: var(--blue); }
+  nav.tabs button[aria-selected="true"] svg { background: var(--accent-bg); }
 
   section.tab { display: none; }
   section.tab.active { display: block; }
@@ -88,19 +93,19 @@
   h2 { font-size: 1rem; margin: 1.3rem 0 .6rem; letter-spacing: -.01em; }
   h2 .k { font-weight: 500; font-size: .78rem; color: var(--text-muted); margin-left: .4rem; }
   .card {
-    background: var(--tile); border: 1px solid var(--border); border-radius: 12px;
+    background: var(--tile); border: 1px solid var(--border); border-radius: 16px;
     padding: .9rem 1rem; box-shadow: var(--shadow); margin-bottom: .7rem;
   }
 
   /* stats */
   .stat-row { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: .55rem; margin-bottom: .9rem; }
-  .stat { background: var(--tile); border: 1px solid var(--border); border-radius: 10px; padding: .55rem .65rem; box-shadow: var(--shadow); min-width: 0; }
+  .stat { background: var(--tile); border: 1px solid var(--border); border-radius: 14px; padding: .55rem .65rem; box-shadow: var(--shadow); min-width: 0; }
   .stat .l { font-size: .66rem; text-transform: uppercase; letter-spacing: .04em; color: var(--text-muted); }
   .stat .v { font-size: 1.25rem; font-weight: 700; letter-spacing: -.02em; margin-top: .05rem; }
   .stat .n { font-size: .7rem; color: var(--text-secondary); }
 
   /* map */
-  .mapcard { background: var(--tile); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; margin-bottom: .7rem; }
+  .mapcard { background: var(--tile); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; margin-bottom: .7rem; }
   .mapcard svg { display: block; width: 100%; height: auto; background: var(--map-bg); touch-action: manipulation; }
   .mapcard .cap { padding: .55rem .9rem .7rem; font-size: .74rem; color: var(--text-muted); }
   svg .node { cursor: pointer; }
@@ -139,7 +144,7 @@
   .sheet {
     position: fixed; left: 50%; bottom: 0; transform: translate(-50%, 105%);
     width: 100%; max-width: 560px; background: var(--surface-1);
-    border-radius: 18px 18px 0 0; z-index: 41; max-height: 86vh; overflow-y: auto;
+    border-radius: 22px 22px 0 0; z-index: 41; max-height: 86vh; overflow-y: auto;
     padding: .4rem 1.1rem calc(1.1rem + env(safe-area-inset-bottom));
     transition: transform .28s cubic-bezier(.32,.72,.32,1);
     box-shadow: 0 -8px 30px rgba(0,0,0,.3);
@@ -242,7 +247,7 @@
     font-size: .84rem; font-weight: 650; color: var(--text-muted);
     padding: .55rem .4rem; border-radius: 999px; transition: color .15s, background .15s;
   }
-  .seg button[aria-pressed="true"] { background: var(--blue); color: #fff; box-shadow: var(--shadow); }
+  .seg button[aria-pressed="true"] { background: var(--grad); color: #fff; box-shadow: var(--shadow); }
 
   /* ranked priority queue */
   .queue-h {
@@ -349,6 +354,13 @@
 
   /* polls v2 */
   .poll { border-radius: 16px; padding: 1rem 1.05rem .9rem; }
+  .poll .phead { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+  .poll .closes {
+    font-size: .68rem; font-weight: 750; color: var(--text-muted);
+    font-variant-numeric: tabular-nums; display: inline-flex; align-items: center; gap: .28rem;
+  }
+  .poll .closes.soon { color: var(--serious); }
+  .poll.closed .poll-opt { cursor: default; }
   .poll .ptag {
     display: inline-flex; align-items: center; gap: .3rem; font-size: .6rem; font-weight: 820;
     letter-spacing: .07em; text-transform: uppercase; color: var(--blue); background: var(--accent-bg);
@@ -382,8 +394,21 @@
   .compose-entry .ph { color: var(--text-muted); font-size: .86rem; flex: 1; min-width: 0; font-weight: 550; }
   .compose-entry .go {
     width: 34px; height: 34px; flex: none; border-radius: 50%; color: #fff;
-    background: linear-gradient(135deg, var(--blue), #7c5cff);
+    background: var(--grad);
     display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 700; line-height: 1;
+  }
+
+  /* join nudge (signed-out) */
+  .join-nudge {
+    display: flex; align-items: center; gap: .6rem; width: 100%; margin-top: .65rem;
+    padding: .68rem .85rem; border-radius: 16px;
+    border: 1.5px dashed color-mix(in srgb, var(--blue) 40%, transparent);
+    background: color-mix(in srgb, var(--blue) 6%, transparent);
+    color: var(--text-primary); font: inherit; font-size: .82rem; font-weight: 620; cursor: pointer; text-align: left;
+  }
+  .join-nudge .cta {
+    margin-left: auto; flex: none; background: var(--grad); color: #fff;
+    border-radius: 999px; padding: .35rem .85rem; font-size: .75rem; font-weight: 780;
   }
 
   /* feed filter pills */
@@ -433,7 +458,7 @@
   }
   .th-input input:focus { outline: 2px solid var(--blue); outline-offset: -1px; }
   .th-input button {
-    flex: none; border: none; border-radius: 999px; background: var(--blue); color: #fff;
+    flex: none; border: none; border-radius: 999px; background: var(--grad); color: #fff;
     font: inherit; font-size: .8rem; font-weight: 750; padding: 0 1rem; cursor: pointer;
   }
 
@@ -449,8 +474,8 @@
   }
   .chips-select button.sel { border-color: var(--blue); color: var(--blue); background: color-mix(in srgb, var(--blue) 10%, transparent); }
   .btn-primary {
-    width: 100%; margin-top: .7rem; border: none; border-radius: 10px; background: var(--blue); color: #fff;
-    font: inherit; font-size: .88rem; font-weight: 700; padding: .65rem; cursor: pointer;
+    width: 100%; margin-top: .7rem; border: none; border-radius: 12px; background: var(--grad); color: #fff;
+    font: inherit; font-size: .88rem; font-weight: 700; padding: .68rem; cursor: pointer;
   }
   .btn-primary:disabled { opacity: .45; cursor: default; }
   .comp-h { font-size: .68rem; text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted); font-weight: 750; margin-top: .7rem; }
@@ -489,7 +514,7 @@
 <header class="app">
   <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;gap:.75rem;">
     <div style="min-width:0;">
-      <h1><span class="logo">◈</span> Campus Compass</h1>
+      <h1><span class="logo">🧭</span> Campus Compass</h1>
       <div class="meta"><span class="live">● Live</span> · 6 nodes · <span id="hdr-reports">—</span> reports this week · UW Campus <span style="opacity:.7">(simulated data)</span></div>
     </div>
     <button class="acct-btn anon" id="acct-btn">Sign in</button>
@@ -705,14 +730,18 @@
   <section class="tab" id="tab-community" role="tabpanel" aria-label="Community">
 
     <div class="pulse-hero" id="pulse-hero"></div>
+    <button class="join-nudge" id="join-nudge" hidden>
+      <span>👋 New here? Join in 10 seconds to post, vote & shape campus</span>
+      <span class="cta">Sign up</span>
+    </button>
 
-    <div class="rail-h"><span class="t">Spots right now</span><span class="r">tap for the story</span></div>
+    <div class="rail-h"><span class="t">📍 Spots right now</span><span class="r">tap for the story</span></div>
     <div class="spot-rail" id="spot-rail"></div>
 
-    <div class="rail-h"><span class="t">Live polls</span><span class="r">vote to see results</span></div>
+    <div class="rail-h"><span class="t">🗳️ Live polls</span><span class="r">vote to see results</span></div>
     <div id="polls"></div>
 
-    <div class="rail-h"><span class="t">The feed</span><span class="r" id="feed-count"></span></div>
+    <div class="rail-h"><span class="t">💬 The feed</span><span class="r" id="feed-count"></span></div>
     <button class="compose-entry" id="compose-entry">
       <span class="av" id="ce-av">🙂</span>
       <span class="ph">What's it like out there right now?</span>
@@ -1309,13 +1338,23 @@ const REPLIES_SEED = {
         { by:'Omar',   av:'🌱', prog:'Biology', m:96, text:'This is what the whole quad could feel like with more canopy' } ],
 };
 const POLLS = [
-  { id:'shade', q:'Where should the next shade structure go?', meta:'Facilities is funding one install this fall',
+  { id:'shade', q:'Where should the next shade structure go?', meta:'Facilities is funding one install this fall', closesMin: 2 * 1440 + 300,
     opts:[['Ring Rd bus stop', 214], ['SLC/QNC courtyard', 188], ['RCH south walkway', 102], ['Lot C walking edge', 67]] },
-  { id:'lotc',  q:'Lot C tree rows: worth losing ~14 parking spots?', meta:'The trade-off behind the #1 ranked action',
+  { id:'lotc',  q:'Lot C tree rows: worth losing ~14 parking spots?', meta:'The trade-off behind the #1 ranked action', closesMin: 380,
     opts:[['Yes — shade wins', 326], ['No — keep the parking', 91]] },
-  { id:'when',  q:'When does campus heat bother you most?', meta:'Helps time shade and water stations',
+  { id:'when',  q:'When does campus heat bother you most?', meta:'Helps time shade and water stations', closesMin: 27,
     opts:[['11–1', 88], ['1–3', 201], ['3–5', 134], ['After 5', 52]] },
 ];
+/* poll countdowns anchor to the first visit so they genuinely run down across reloads */
+let pollAnchor = store.get('poll_anchor', null);
+if (!pollAnchor) { pollAnchor = Date.now(); store.set('poll_anchor', pollAnchor); }
+const pollMsLeft = p => pollAnchor + p.closesMin * 60000 - Date.now();
+function fmtLeft(ms) {
+  const m = Math.ceil(ms / 60000);
+  if (m >= 1440) return `${Math.floor(m/1440)}d ${Math.floor(m%1440/60)}h left`;
+  if (m >= 60) return `${Math.floor(m/60)}h ${m%60}m left`;
+  return `${m}m left`;
+}
 
 /* user state */
 let me = store.get('user', null);
@@ -1370,6 +1409,7 @@ function renderAcctBtn() {
     b.textContent = 'Sign in';
   }
   document.getElementById('ce-av').textContent = me ? me.av : '🙂';
+  document.getElementById('join-nudge').hidden = !!me;
 }
 function openAcctSheet() {
   const d = document.getElementById('sheet-content');
@@ -1459,34 +1499,59 @@ function renderPolls() {
   document.getElementById('polls').innerHTML = POLLS.map((p, pi) => {
     const mine = myVotes[p.id];
     const voted = mine !== undefined;
+    const left = pollMsLeft(p);
+    const closed = left <= 0;
+    const reveal = voted || closed; // results go public once the poll closes
     const counts = p.opts.map(([,c], i) => c + (mine === i ? 1 : 0));
     const total = counts.reduce((a,b) => a+b, 0);
-    return `<div class="card poll" data-poll="${p.id}">
-      <span class="ptag">● Live poll</span>
+    const winner = counts.indexOf(Math.max(...counts));
+    return `<div class="card poll ${closed ? 'closed' : ''}" data-poll="${p.id}">
+      <div class="phead">
+        <span class="ptag">${closed ? '🏁 Final results' : '● Live poll'}</span>
+        <span class="closes ${!closed && left < 3600000 ? 'soon' : ''}">${closed ? 'Voting closed' : '⏳ ' + fmtLeft(left)}</span>
+      </div>
       <div class="q">${p.q}</div>
       ${p.opts.map(([label], i) => {
         const pct = Math.round(counts[i] / total * 100);
-        return `<button class="poll-opt ${mine === i ? 'mine' : ''}" data-i="${i}">
-          ${voted ? `<span class="fill" style="width:${pct}%"></span>` : ''}
-          <span class="t">${mine === i ? '✓ ' : ''}${label}</span>
-          ${voted ? `<span class="pc">${pct}%</span>` : ''}
+        return `<button class="poll-opt ${mine === i ? 'mine' : ''}" data-i="${i}" ${closed ? 'disabled' : ''}>
+          ${reveal ? `<span class="fill" style="width:${pct}%"></span>` : ''}
+          <span class="t">${mine === i ? '✓ ' : closed && i === winner ? '🏆 ' : ''}${label}</span>
+          ${reveal ? `<span class="pc">${pct}%</span>` : ''}
         </button>`;
       }).join('')}
       <div class="foot">
         <span class="avs">${AV.slice(pi, pi + 3).map(e => `<span>${e}</span>`).join('')}</span>
-        <span class="tot">${total.toLocaleString()} voted · ${voted ? 'tap to change yours' : p.meta}</span>
+        <span class="tot">${total.toLocaleString()} voted · ${closed ? (mine === winner ? 'your pick won' : p.meta) : voted ? 'tap to change yours' : p.meta}</span>
       </div>
     </div>`;
   }).join('');
-  document.querySelectorAll('.poll .poll-opt').forEach(b =>
+  document.querySelectorAll('.poll:not(.closed) .poll-opt').forEach(b =>
     b.addEventListener('click', () => {
       const pid = b.closest('.poll').dataset.poll, i = +b.dataset.i;
+      if (pollMsLeft(POLLS.find(p => p.id === pid)) <= 0) { renderPolls(); return; }
       requireAcct(() => {
         myVotes[pid] = i; store.set('votes', myVotes);
         renderPolls(); renderHero();
       });
     }));
 }
+/* live countdown tick — repaint chips in place; full re-render only when a poll flips closed */
+setInterval(() => {
+  if (!document.getElementById('tab-community').classList.contains('active')) return;
+  let flipped = false;
+  POLLS.forEach(p => {
+    const card = document.querySelector(`.poll[data-poll="${p.id}"]`);
+    if (!card) return;
+    const left = pollMsLeft(p);
+    if (left <= 0 && !card.classList.contains('closed')) { flipped = true; return; }
+    const el = card.querySelector('.closes');
+    if (el && left > 0) {
+      el.textContent = '⏳ ' + fmtLeft(left);
+      el.classList.toggle('soon', left < 3600000);
+    }
+  });
+  if (flipped) renderPolls();
+}, 20000);
 
 /* feed */
 function postHTML(r, inThread = false) {
@@ -1637,6 +1702,7 @@ function renderCommunity() {
   renderHero(); renderRail(); renderPolls(); renderFeed();
 }
 document.getElementById('acct-btn').addEventListener('click', openAcctSheet);
+document.getElementById('join-nudge').addEventListener('click', openAcctSheet);
 
 /* ─── heat map mode toggle: qualitative severity overlay ⇄ quantitative live readings ─── */
 function setMapMode(m) {
